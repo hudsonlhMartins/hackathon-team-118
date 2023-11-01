@@ -1,1 +1,1 @@
-export { default } from "$store/components/personal-shopper/ClientPShopper.tsx";
+export { default } from "../../components/personal-shopper/Client/ClientPShopper.tsx";

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import SellerUtils from "./utils/SellerUtils.ts";
+import SellerUtils from "../utils/SellerUtils.ts";
 
 let sellerUtils: SellerUtils;
 
 export interface Props {}
 const SellerPShopperStream = () => {
-  const [cameraOff, setCameraOff] = useState(false);
+  const [videoOff, setVideoOff] = useState(false);
   const [audioOff, setAudioOff] = useState(false);
   const [inputUsername, setInputUsername] = useState("");
   const [localStream, setLocalStream] = useState<MediaStream>();
@@ -47,14 +47,18 @@ const SellerPShopperStream = () => {
         <video ref={remoteVideo} id="remote-video" autoPlay></video>
         <div class="call-action-div">
           <button
-            onClick={() =>
-              sellerUtils.closeCamera(localStream, cameraOff, setCameraOff)}
+            onClick={() => {
+              setVideoOff((prev) => !prev);
+              sellerUtils.closeCamera(localStream);
+            }}
           >
             Close Camera
           </button>
           <button
-            onClick={() =>
-              sellerUtils.muteAudio(localStream, audioOff, setAudioOff)}
+            onClick={() => {
+              setAudioOff((prev) => !prev);
+              sellerUtils.muteAudio(localStream);
+            }}
           >
             Mute Audio
           </button>

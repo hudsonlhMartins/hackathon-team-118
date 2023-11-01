@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { lazy, Suspense } from "preact/compat";
 import ClientUtils from "../utils/ClientUtils.ts";
-import { UserProfile } from "deco-sites/hugo-estudos/components/personal-shopper/utils/utils.ts";
+import { UserProfile } from "$store/components/personal-shopper/utils/utils.ts";
 
 const IconVideoOff = lazy(() =>
   import(
