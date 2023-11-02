@@ -30,7 +30,7 @@ export async function checkAuth() {
       Email: "hugo.correia@agenciam3.com",
     };
 
-    //TODO: login nao funciona. Fetch mockado
+    //login nao funciona. Fetch mockado
     // const data = (await response.json()) as UserProfile;
     console.log("utils.ts -> checkAuth -> data", data);
 
@@ -46,6 +46,7 @@ export async function checkAuth() {
 
 export async function checkSeller(email: string | undefined) {
   //TODO: buscar validação no masterdata de uma rota interna por causa das chaves privadaa
+  await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  return true;
+  return { isSeller: true, sellerCategories: "/8/18/" };
 }
