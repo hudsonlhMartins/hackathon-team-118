@@ -180,9 +180,7 @@ function closeConnect(data:any, conn:any) {
       const masterdataSellerRepository = new MasterdataSellerRepository()
       ;(async()=>{
         await masterdataSellerRepository.updateStatus(data.sellerName, false)
-
       })()
-
 
     }
 
