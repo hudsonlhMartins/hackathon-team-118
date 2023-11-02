@@ -14,9 +14,9 @@ const getPropsFromRequest = async (req: Request) => {
 */ 
 
 let users:any = [];
-let sellers:any = [];
+let sellers:any[] = [];
 
-
+const masterdataSellerRepository = new MasterdataSellerRepository()
 export const handler = async (
   req: Request,
   ctx: HandlerContext<
@@ -34,7 +34,7 @@ export const handler = async (
   });
 
 
-  socket.addEventListener("message", (event) => {
+  socket.addEventListener("message", async (event) => {
 
     const data = JSON.parse(event.data)
     
@@ -84,57 +84,84 @@ export const handler = async (
           sellers.push(newSeller);
           console.log("SELLERS----->", sellers);
 
+          await updateStatus(data.sellerName, true)
+
           closeConnect(newSeller, socket);
         }
           break
 
-        case "store_offer":
+      case "store_offer":
+        {
+          if (user == null) return;
+          user.offer = data.offer;
+        }
+        break
+
+      case "store_candidate":
+        if (user == null) {
+          return;
+        }
+        if (user.candidates == null) user.candidates = [];
+
+        user.candidates.push(data.candidate);
+        break;
+
+      case "send_answer":
+        console.log("USERaa");
+        console.log("USER", user);
+        if (user == null) {
+          return;
+        }
+        console.log("answer", data.answer);
+        sendData(
           {
-            if (user == null) return;
-            user.offer = data.offer;
-          }
-          break
+            type: "answer",
+            answer: data.answer,
+          },
+          user.conn,
+        );
+        break;
 
-        case "store_candidate":
-          if (user == null) {
-            return;
-          }
-          if (user.candidates == null) user.candidates = [];
-  
-          user.candidates.push(data.candidate);
-          break;
+      case "send_candidate":
+        if (user == null) {
+          return;
+        }
 
-        case "send_answer":
-          console.log("USERaa");
-          console.log("USER", user);
-          if (user == null) {
-            return;
-          }
-          console.log("answer", data.answer);
-          sendData(
-            {
-              type: "answer",
-              answer: data.answer,
-            },
-            user.conn,
-          );
-          break;
+        sendData(
+          {
+            type: "candidate",
+            candidate: data.candidate,
+          },
+          user.conn,
+        );
+        break;
+      
+      case "join_call":
+        if (user == null) {
+          return;
+        }
 
-        case "send_candidate":
-          if (user == null) {
-            return;
-          }
-  
+        sendData(
+          {
+            type: "offer",
+            offer: user.offer,
+          },
+          socket,
+        );
+
+        user.candidates.forEach((candidate:any) => {
           sendData(
             {
               type: "candidate",
-              candidate: data.candidate,
+              candidate: candidate,
             },
-            user.conn,
+            socket,
           );
-          break;
-        
-        case "join_call":
+        });
+
+        break;
+
+      case "leave_call":
           if (user == null) {
             return;
           }
@@ -158,9 +185,10 @@ export const handler = async (
           });
   
           break;
+
         
-        default:
-        break
+      default:
+      break
     }
     
     
@@ -177,15 +205,20 @@ function closeConnect(data:any, conn:any) {
 
     if('sellerName' in data) {
 
-      const masterdataSellerRepository = new MasterdataSellerRepository()
       ;(async()=>{
-        await masterdataSellerRepository.updateStatus(data.sellerName, false)
+        await updateStatus(data.sellerName, false)
+        const indexItem = sellers.findIndex((el:any)=> el.sellerName === data.sellerName)
+        if(indexItem < 0) return
+
+        sellers.splice(indexItem, 1)
       })()
 
     }
-
-    console.log('close event', event)
   })
+}
+
+async function updateStatus(id:string,status:boolean){
+  await masterdataSellerRepository.updateStatus(id, status)
 }
 
 function sendData(data:any, conn:any) {
