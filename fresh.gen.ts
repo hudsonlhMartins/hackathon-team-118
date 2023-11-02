@@ -3,7 +3,8 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $0 from "./routes/_app.tsx";
-import * as $1 from "./routes/websocket/index.tsx";
+import * as $1 from "./routes/check-seller/index.ts";
+import * as $2 from "./routes/websocket/index.tsx";
 import * as $$0 from "./islands/AddToCartButton/linx.tsx";
 import * as $$1 from "./islands/AddToCartButton/shopify.tsx";
 import * as $$2 from "./islands/AddToCartButton/vnda.tsx";
@@ -33,7 +34,8 @@ import * as $$24 from "./islands/WishlistButton.tsx";
 const manifest = {
   routes: {
     "./routes/_app.tsx": $0,
-    "./routes/websocket/index.tsx": $1,
+    "./routes/check-seller/index.ts": $1,
+    "./routes/websocket/index.tsx": $2,
   },
   islands: {
     "./islands/AddToCartButton/linx.tsx": $$0,
