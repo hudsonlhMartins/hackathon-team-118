@@ -43,3 +43,8 @@ export async function checkAuth() {
     // return null;
   }
 }
+
+
+export async function checkSeller(email: string){
+  //TODO: 
+}

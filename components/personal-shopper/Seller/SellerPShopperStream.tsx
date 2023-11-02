@@ -4,11 +4,14 @@ import { Contact } from "$store/components/personal-shopper/types.ts";
 import ContactCard from "$store/components/personal-shopper/components/ContactCard.tsx";
 import VideoModal from "$store/components/personal-shopper/components/VideoModal.tsx";
 import VideoModalSeller from "$store/islands/VideoModalSeller.tsx";
+import { checkAuth, checkSeller } from "$store/components/personal-shopper/utils/utils.ts";
 
 export interface Props {}
 const SellerPShopperStream = () => {
   const [localStream, setLocalStream] = useState<MediaStream>();
   const [contact, setContact] = useState<Contact | null>(null);
+  
+  
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
@@ -17,6 +20,7 @@ const SellerPShopperStream = () => {
   // const connectionRef= useRef<any>(null)
 
   const sellerUtils = useRef<SellerUtils | null>(null);
+
 
   const handleJoin = async () => {
     await sellerUtils?.current?.setUsername(
@@ -30,25 +34,39 @@ const SellerPShopperStream = () => {
   };
 
   useEffect(() => {
-    sellerUtils.current = new SellerUtils(setContact);
 
-    const initializeSeller = async () => {
-      if (sellerUtils?.current?.webSocket.readyState !== 1) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        initializeSeller();
-        return;
+    const checkSellerAuth = async ()=>{
+
+      const authData = await checkAuth()
+
+      const authEmail = authData?.profileData?.Email 
+
+      const isSeller = await checkSeller(authEmail)
+
+      if(!isSeller){
+        window.location.pathname = "/"
       }
-      await sellerUtils?.current?.sendSellerName(
-        "teste@teste.com",
-        "/8/18/20",
-      );
-    };
-    initializeSeller();
-  }, [sellerUtils /* , sellerUtils.webSocket.readyState */]);
 
-  useEffect(() => {
-    console.log("STATE COntact", contact);
-  }, [contact]);
+      sellerUtils.current = new SellerUtils(setContact);
+  
+      const initializeSeller = async () => {
+        if (sellerUtils?.current?.webSocket.readyState !== 1) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          initializeSeller();
+          return;
+        }
+        await sellerUtils?.current?.sendSellerName(
+          "teste@teste.com",
+          "/8/18/20",
+        );
+      };
+      initializeSeller();
+    }
+
+
+
+    checkSellerAuth()
+  }, [sellerUtils]);
 
   return (
     <div
