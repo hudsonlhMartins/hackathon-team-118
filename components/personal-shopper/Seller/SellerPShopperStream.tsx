@@ -42,8 +42,11 @@ const SellerPShopperStream = () => {
 
       const { isSeller, sellerCategories } = await checkSeller(authEmail);
 
+      console.log("SellerPShopperStream.tsx -> isSeller: asdasdasd", isSeller);
+
       if (!isSeller) {
-        window.location.pathname = "/";
+        // window.location.pathname = "/";
+        return;
       }
       setShowContent(true);
 

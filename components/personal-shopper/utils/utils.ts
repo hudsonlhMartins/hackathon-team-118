@@ -29,7 +29,7 @@ export async function checkAuth() {
       FirstName: "qwe",
       LastName: "qwe",
       Gender: null,
-      Email: "hugo.correia@agenciam3.com",
+      Email: "teste@teste.com",
     };
 
     //login nao funciona. Fetch mockado
@@ -48,17 +48,16 @@ export async function checkAuth() {
 
 export async function checkSeller(email: string | undefined) {
   try {
-    const resp = await fetch("/check-seller?" + email);
+    const resp = await fetch("/check-seller?email=" + email);
 
-    const sellerData: SellerType | false = await resp.json();
+    const sellerData: SellerType[] | false = await resp.json();
 
     if (!sellerData) return { isSeller: false, sellerCategories: "" };
 
-    const { sellerCategoryIds, isSeller } = sellerData;
-
+    const { sellerCategoryIds, isSeller } = sellerData[0];
+    
     return { isSeller, sellerCategories: sellerCategoryIds };
   } catch (error) {
-    console.log("utils.ts -> error", error);
 
     return { isSeller: false, sellerCategories: "" };
   }
