@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "preact/hooks";
+
 import { SellerType } from "$store/service/repositories/ISellerRepository.ts";
 
 import {Product} from '$store/components/personal-shopper/types.ts'
