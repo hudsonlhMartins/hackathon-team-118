@@ -85,4 +85,4 @@ const ClientPShopperStream = ({ productId }: Props) => {
   );
 };
 
-export default PersonalShopperStream;
+export default ClientPShopperStream;
