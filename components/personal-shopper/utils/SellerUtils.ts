@@ -14,6 +14,7 @@ export default class SellerUtils extends BaseUtils {
   }
 
   _handleSignallingData(data: any) {
+    console.log("ois");
     switch (data.type) {
       case "offer":
         this.peerConn.setRemoteDescription(data.offer);
@@ -21,6 +22,9 @@ export default class SellerUtils extends BaseUtils {
         break;
       case "answer":
         this.peerConn.setRemoteDescription(data.answer);
+        break;
+      case "contact":
+        console.log("CONTACT", data.userInfo);
         break;
       case "candidate":
         this.peerConn.addIceCandidate(data.candidate);

@@ -15,8 +15,6 @@ export default class ClientUtils extends BaseUtils {
       this.userName = userName;
       this._sendData({
         type: "store_user",
-        userInfo,
-        product,
       });
       resolve();
     });
@@ -24,6 +22,9 @@ export default class ClientUtils extends BaseUtils {
 
   protected _handleSignallingData(data: any) {
     switch (data.type) {
+      case "contact":
+        console.log("AAAAAAA");
+        break;
       case "answer":
         this.peerConn.setRemoteDescription(data.answer);
         break;
