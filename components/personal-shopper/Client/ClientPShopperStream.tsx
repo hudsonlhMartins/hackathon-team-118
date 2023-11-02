@@ -19,7 +19,7 @@ export interface Props {
   productId: string;
 }
 
-const PersonalShopperStream = ({ productId }: Props) => {
+const ClientPShopperStream = ({ productId }: Props) => {
   const [isAuth, setIsAuth] = useState(false);
   const [modalOpened, setModalOpened] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>();
@@ -85,4 +85,4 @@ const PersonalShopperStream = ({ productId }: Props) => {
   );
 };
 
-export default memo(PersonalShopperStream);
+export default memo(ClientPShopperStream);

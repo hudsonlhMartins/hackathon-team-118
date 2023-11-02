@@ -44,7 +44,8 @@ export async function checkAuth() {
   }
 }
 
+export async function checkSeller(email: string | undefined) {
+  //TODO: buscar validação no masterdata de uma rota interna por causa das chaves privadaa
 
-export async function checkSeller(email: string){
-  //TODO: 
+  return true;
 }
