@@ -4,7 +4,8 @@
 
 import * as $0 from "./routes/_app.tsx";
 import * as $1 from "./routes/check-seller/index.ts";
-import * as $2 from "./routes/websocket/index.tsx";
+import * as $2 from "./routes/list-sellers/index.ts";
+import * as $3 from "./routes/websocket/index.tsx";
 import * as $$0 from "./islands/AddToCartButton/linx.tsx";
 import * as $$1 from "./islands/AddToCartButton/shopify.tsx";
 import * as $$2 from "./islands/AddToCartButton/vnda.tsx";
@@ -35,7 +36,8 @@ const manifest = {
   routes: {
     "./routes/_app.tsx": $0,
     "./routes/check-seller/index.ts": $1,
-    "./routes/websocket/index.tsx": $2,
+    "./routes/list-sellers/index.ts": $2,
+    "./routes/websocket/index.tsx": $3,
   },
   islands: {
     "./islands/AddToCartButton/linx.tsx": $$0,

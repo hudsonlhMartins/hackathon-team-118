@@ -26,7 +26,7 @@ const ClientPShopperStream = ({ productId }: Props) => {
   const [btnLoading, setBtnLoading] = useState(false);
   //TODO: ajustar re-render
   const prod = useProduct(productId);
-  const { hasSeller } = useCategorySeller(productId);
+  const { hasSeller, loading } =  useCategorySeller(productId);
 
   const handleClick = async () => {
     if (modalOpened) {
@@ -52,8 +52,11 @@ const ClientPShopperStream = ({ productId }: Props) => {
 
   useEffect(() => {
     console.log("PRODID", productId);
-    console.log("PROD", prod.data);
+    console.log("PROD", prod);
   }, [prod]);
+
+
+  console.log("hasSeller", hasSeller);
 
   return (
     <>
