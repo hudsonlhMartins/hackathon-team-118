@@ -1,3 +1,5 @@
+import { SellerType } from "$store/service/repositories/ISellerRepository.ts";
+
 export interface UserProfile {
   UserId: string;
   IsReturningUser: boolean;
@@ -45,8 +47,19 @@ export async function checkAuth() {
 }
 
 export async function checkSeller(email: string | undefined) {
-  //TODO: buscar validação no masterdata de uma rota interna por causa das chaves privadaa
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  try {
+    const resp = await fetch("/check-seller?" + email);
 
-  return { isSeller: true, sellerCategories: "/8/18/" };
+    const sellerData: SellerType | false = await resp.json();
+
+    if (!sellerData) return { isSeller: false, sellerCategories: "" };
+
+    const { sellerCategoryIds, isSeller } = sellerData;
+
+    return { isSeller, sellerCategories: sellerCategoryIds };
+  } catch (error) {
+    console.log("utils.ts -> error", error);
+
+    return { isSeller: false, sellerCategories: "" };
+  }
 }
