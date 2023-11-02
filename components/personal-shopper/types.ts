@@ -6,14 +6,14 @@ export interface Product {
   brandImageUrl?: null;
   linkText: string;
   productReference: string;
-  productReferenceCode: string;
+  productReferenceCode?: string;
   categoryId: string;
-  productTitle: string;
-  metaTagDescription: string;
+  productTitle?: string;
+  metaTagDescription?: string;
   releaseDate: string;
   clusterHighlights: ClusterHighlights;
   productClusters: ProductClusters;
-  searchableClusters: SearchableClusters;
+  searchableClusters?: SearchableClusters;
   categories?: (string)[] | null;
   categoriesIds?: (string)[] | null;
   link: string;
@@ -147,4 +147,15 @@ export interface PaymentSystemsEntity {
   requiresAuthentication: boolean;
   dueDate: string;
   availablePayments?: null;
+}
+
+export interface UserInfo {
+  UserId: string;
+  IsReturningUser: boolean;
+  IsUserDefined: boolean;
+  IsPJ: boolean;
+  FirstName: string;
+  LastName: string;
+  Gender: string;
+  Email: string;
 }

@@ -3,18 +3,20 @@ import {
   Ref,
   StateUpdater,
 } from "https://esm.sh/v128/preact@10.15.1/hooks/src/index.js";
+import { Product, UserInfo } from "$store/components/personal-shopper/types.ts";
 
 export default class ClientUtils extends BaseUtils {
   constructor() {
     super();
   }
 
-  sendUsername(userName: string) {
+  sendUsername(userName: string, product: Product, userInfo: UserInfo) {
     return new Promise<void>((resolve) => {
       this.userName = userName;
       this._sendData({
         type: "store_user",
-        //TODO: enviar mais dados
+        userInfo,
+        product,
       });
       resolve();
     });

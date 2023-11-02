@@ -1,8 +1,8 @@
-import { Product } from "apps/vtex/utils/types.ts";
+import { Product } from "$store/components/personal-shopper/types.ts";
 import { useEffect, useState } from "preact/hooks";
 
 export default function useProduct(productId: string) {
-  const [data, setData] = useState<Product | null>(null);
+  const [data, setData] = useState<Product[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -27,5 +27,5 @@ export default function useProduct(productId: string) {
     fetchData();
   }, [url]);
 
-  return { data, loading, error };
+  return { data: data ? data[0] : null, loading, error };
 }

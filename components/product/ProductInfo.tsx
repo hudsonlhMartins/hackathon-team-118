@@ -14,6 +14,7 @@ import { usePlatform } from "$store/sdk/usePlatform.tsx";
 import { ProductDetailsPage } from "apps/commerce/types.ts";
 import { mapProductToAnalyticsItem } from "apps/commerce/utils/productToAnalyticsItem.ts";
 import ProductSelector from "./ProductVariantSelector.tsx";
+import ClientPShopper from "$store/sections/PersonalShopper/ClientPShopper.tsx";
 
 interface Props {
   page: ProductDetailsPage | null;
@@ -110,6 +111,7 @@ function ProductInfo({ page, layout }: Props) {
             <>
               {platform === "vtex" && (
                 <>
+                  <ClientPShopper productId={productID} />
                   <AddToCartButtonVTEX
                     url={url || ""}
                     name={name}

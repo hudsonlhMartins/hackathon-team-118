@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { lazy, Suspense } from "preact/compat";
 import ClientUtils from "../utils/ClientUtils.ts";
 import { UserProfile } from "$store/components/personal-shopper/utils/utils.ts";
+import { Product, UserInfo } from "$store/components/personal-shopper/types.ts";
 
 const IconVideoOff = lazy(() =>
   import(
@@ -28,9 +29,10 @@ const IconEar = lazy(() =>
 export interface Props {
   userProfile: UserProfile;
   modalOpened: boolean;
+  product: Product;
 }
 
-const VideoModal = ({ userProfile, modalOpened }: Props) => {
+const VideoModal = ({ userProfile, modalOpened, product }: Props) => {
   const [audioOff, setAudioOff] = useState(false);
   const [videoOff, setVideoOff] = useState(false);
   const [localStream, setLocalStream] = useState<MediaStream>();
@@ -39,6 +41,8 @@ const VideoModal = ({ userProfile, modalOpened }: Props) => {
   const remoteVideo = useRef<HTMLVideoElement>(null);
   //TODO: leave call com connectionRef.current.destroy()
   // const connectionRef= useRef<any>(null)
+
+  const { categoryId, productId, productName, link } = product;
 
   const clientUtils = useMemo(() => new ClientUtils(), []);
 
@@ -51,7 +55,11 @@ const VideoModal = ({ userProfile, modalOpened }: Props) => {
         initializeCall();
         return;
       }
-      await clientUtils.sendUsername(userProfile.Email);
+      await clientUtils.sendUsername(
+        userProfile.Email,
+        { categoryId, productId, productName, link } as Product,
+        userProfile as UserInfo
+      );
       clientUtils.startCall(setLocalStream, myVideo, remoteVideo);
     };
     initializeCall();
