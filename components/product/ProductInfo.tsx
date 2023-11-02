@@ -43,6 +43,7 @@ function ProductInfo({ page, layout }: Props) {
     url,
     productID,
     offers,
+    sku,
     name = "",
     gtin,
     isVariantOf,

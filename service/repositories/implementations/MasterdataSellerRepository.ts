@@ -55,4 +55,29 @@ export class MasterdataSellerRepository implements ISellerRepository {
       return false;
     }
   }
+
+  async listSeller():Promise<SellerType | []>{
+
+    const url =
+    `${this.urlBase}/api/dataentities/CL/search?isSeller=true&_fields=isActive,email,userId,isSeller,sellerCategoryIds,id`;
+
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          "VtexIdclientAutCookie": this.token,
+        },
+        method: "GET",
+      });
+
+      const data = await res.json() as SellerType;
+
+      return data;
+      
+    } catch (err) {
+
+      return [];
+    }
+
+  }
 }
