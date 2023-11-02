@@ -1,5 +1,6 @@
 import { HandlerContext, PageProps } from "$fresh/server.ts";
 import { DecoSiteState, DecoState } from "deco/types.ts";
+import { MasterdataSellerRepository } from "$store/service/repositories/implementations/MasterdataSellerRepository.ts";
 
 /*
 const getPropsFromRequest = async (req: Request) => {
@@ -172,7 +173,18 @@ function closeConnect(data:any, conn:any) {
 
   conn.addEventListener("close", (event:any) => {
     //TODO: ir no masterdata quando for seller e inativa o seller atual
-    
+
+    if('sellerName' in data) {
+
+      const masterdataSellerRepository = new MasterdataSellerRepository()
+      ;(async()=>{
+        await masterdataSellerRepository.updateStatus(data.sellerName, false)
+
+      })()
+
+
+    }
+
     console.log('close event', event)
   })
 }
