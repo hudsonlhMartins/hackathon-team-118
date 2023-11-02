@@ -59,6 +59,7 @@ export const handler = async (
 
 
           sellers.forEach((element:any) => {
+            //TODO: arrumar category
             if (element.categoryList.includes(data.product.categoryId)) {
               sendData({
                 type: "contact",

@@ -1,13 +1,12 @@
 export type SellerType = {
     userId: string,
     email: string,
-    categoryId: string,
     isSeller: boolean,
-    sellerCategoryIds: string,
-    isActive: boolean
+    isActive: boolean,
+    id:string
 }
 
 export interface ISellerRepository{
-    findByEmail?(email:string):Promise<SellerType>
-    updateStatus(email:string, status:boolean):Promise<void>
+    findByEmail?(email:string):Promise<SellerType | false>
+    updateStatus(email:string, status:boolean):Promise<boolean>
 }

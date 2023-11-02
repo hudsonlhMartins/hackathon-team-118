@@ -14,6 +14,7 @@ let sellers = [];
 //TODO: criar um array para sellers
 
 webSocket.on("request", (req) => {
+  // request === conection
   const connection = req.accept();
   console.log("list of users:", users);
 
@@ -27,7 +28,7 @@ webSocket.on("request", (req) => {
 
     switch (data.type) {
       // deno-lint-ignore no-case-declarations
-      case "store_user":
+      case "store_user": // salvar a conecao do user
         if (user != null) {
           return;
         }
@@ -53,7 +54,7 @@ webSocket.on("request", (req) => {
         console.log(newUser.username);
         break;
 
-      case "store_seller":
+      case "store_seller": // salvar a conecao do seller
         {
           const newSeller = {
             conn: connection,
