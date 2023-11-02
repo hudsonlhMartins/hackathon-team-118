@@ -17,7 +17,6 @@ const SellerPShopperStream = () => {
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
-  const refInput = useRef<HTMLInputElement>(null);
   //TODO: leave call com connectionRef.current.destroy()
   // const connectionRef= useRef<any>(null)
 
@@ -42,8 +41,11 @@ const SellerPShopperStream = () => {
 
       const { isSeller, sellerCategories } = await checkSeller(authEmail);
 
+      console.log("SellerPShopperStream.tsx -> isSeller: asdasdasd", isSeller);
+
       if (!isSeller) {
         window.location.pathname = "/";
+        return;
       }
       setShowContent(true);
 

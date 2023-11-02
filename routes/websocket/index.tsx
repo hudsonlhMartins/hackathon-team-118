@@ -105,7 +105,30 @@ export const handler = async (
 
         user.candidates.push(data.candidate);
         break;
+      case "store_candidate":
+        if (user == null) {
+          return;
+        }
+        if (user.candidates == null) user.candidates = [];
 
+        user.candidates.push(data.candidate);
+        break;
+
+      case "send_answer":
+        console.log("USERaa");
+        console.log("USER", user);
+        if (user == null) {
+          return;
+        }
+        console.log("answer", data.answer);
+        sendData(
+          {
+            type: "answer",
+            answer: data.answer,
+          },
+          user.conn,
+        );
+        break;
       case "send_answer":
         console.log("USERaa");
         console.log("USER", user);
