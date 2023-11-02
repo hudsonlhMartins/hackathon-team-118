@@ -85,4 +85,4 @@ const ClientPShopperStream = ({ productId }: Props) => {
   );
 };
 
-export default memo(ClientPShopperStream);
+export default PersonalShopperStream;
