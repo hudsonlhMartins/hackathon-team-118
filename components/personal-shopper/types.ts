@@ -159,3 +159,8 @@ export interface UserInfo {
   Gender: string;
   Email: string;
 }
+
+export interface Contact {
+  productInfo: Product;
+  userInfo: UserInfo;
+}

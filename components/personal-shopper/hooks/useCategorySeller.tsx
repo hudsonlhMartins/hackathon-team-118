@@ -27,5 +27,6 @@ export default function useCategorySeller(productId: string) {
   //   return { data, loading, error };
 
   // TODO: validar se ha um vendedor para essa caregoria
+  //pegando do tabela cliente o vendedor com o cluester de vendedor que tbm tem a flag de ativo. 
   return { hasSeller: true };
 }

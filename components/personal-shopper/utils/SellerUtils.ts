@@ -3,14 +3,32 @@ import {
   StateUpdater,
 } from "https://esm.sh/v128/preact@10.15.1/hooks/src/index.js";
 import BaseUtils from "$store/components/personal-shopper/utils/BaseUtils.ts";
+import { Contact } from "$store/components/personal-shopper/types.ts";
 
 export default class SellerUtils extends BaseUtils {
-  constructor() {
+  setContact: StateUpdater<Contact | null>;
+  constructor(setContact: StateUpdater<Contact | null>) {
     super();
+    this.setContact = setContact;
+  }
+
+  sendSellerName(sellerName: string, categoryList: string) {
+    return new Promise<void>((resolve) => {
+      console.log("SellerName", sellerName);
+      this._sendData({
+        type: "store_seller",
+        sellerName,
+        categoryList,
+      });
+      resolve();
+    });
   }
 
   setUsername(userName: string) {
-    this.userName = userName;
+    return new Promise<void>((resolve) => {
+      this.userName = userName;
+      resolve();
+    });
   }
 
   _handleSignallingData(data: any) {
@@ -24,7 +42,7 @@ export default class SellerUtils extends BaseUtils {
         this.peerConn.setRemoteDescription(data.answer);
         break;
       case "contact":
-        console.log("CONTACT", data.userInfo);
+        this.setContact(data);
         break;
       case "candidate":
         this.peerConn.addIceCandidate(data.candidate);
@@ -48,6 +66,8 @@ export default class SellerUtils extends BaseUtils {
     myVideo: Ref<HTMLVideoElement>,
     remoteVideo: Ref<HTMLVideoElement>,
   ) {
+    //TODO: tirar o get media da função e colocar no on connect
+
     navigator.mediaDevices.getUserMedia({
       video: {
         frameRate: 24,

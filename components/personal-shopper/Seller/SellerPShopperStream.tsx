@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import SellerUtils from "../utils/SellerUtils.ts";
-
-let sellerUtils: SellerUtils;
+import { Contact } from "$store/components/personal-shopper/types.ts";
+import ContactCard from "$store/components/personal-shopper/components/ContactCard.tsx";
+import VideoModal from "$store/components/personal-shopper/components/VideoModal.tsx";
+import VideoModalSeller from "$store/islands/VideoModalSeller.tsx";
 
 export interface Props {}
 const SellerPShopperStream = () => {
-  const [videoOff, setVideoOff] = useState(false);
-  const [audioOff, setAudioOff] = useState(false);
-  const [inputUsername, setInputUsername] = useState("");
   const [localStream, setLocalStream] = useState<MediaStream>();
+  const [contact, setContact] = useState<Contact | null>(null);
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
@@ -16,54 +16,62 @@ const SellerPShopperStream = () => {
   //TODO: leave call com connectionRef.current.destroy()
   // const connectionRef= useRef<any>(null)
 
+  const sellerUtils = useRef<SellerUtils | null>(null);
+
+  const handleJoin = async () => {
+    await sellerUtils?.current?.setUsername(
+      contact?.userInfo?.Email ?? "",
+    );
+    sellerUtils?.current?.joinCall(
+      setLocalStream,
+      myVideo,
+      remoteVideo,
+    );
+  };
+
   useEffect(() => {
-    sellerUtils = new SellerUtils();
-  }, []);
+    sellerUtils.current = new SellerUtils(setContact);
+
+    const initializeSeller = async () => {
+      if (sellerUtils?.current?.webSocket.readyState !== 1) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        initializeSeller();
+        return;
+      }
+      await sellerUtils?.current?.sendSellerName(
+        "teste@teste.com",
+        "/8/18/20",
+      );
+    };
+    initializeSeller();
+  }, [sellerUtils /* , sellerUtils.webSocket.readyState */]);
+
+  useEffect(() => {
+    console.log("STATE COntact", contact);
+  }, [contact]);
 
   return (
-    <div>
-      <div>
-        <input
-          placeholder="Enter username..."
-          type="text"
-          ref={refInput}
-          id="username-input"
-          value={inputUsername}
-          onChange={(e) =>
-            setInputUsername((e?.target as HTMLInputElement)?.value)}
-        />
-        <br />
-        <button
-          onClick={() => {
-            sellerUtils.setUsername(inputUsername ?? refInput?.current?.value);
-            sellerUtils.joinCall(setLocalStream, myVideo, remoteVideo);
-          }}
-        >
-          Join Call
-        </button>
-      </div>
-      <div id="video-call-div">
-        <video ref={myVideo} muted id="local-video" autoPlay></video>
-        <video ref={remoteVideo} id="remote-video" autoPlay></video>
-        <div class="call-action-div">
-          <button
-            onClick={() => {
-              setVideoOff((prev) => !prev);
-              sellerUtils.closeCamera(localStream);
-            }}
-          >
-            Close Camera
-          </button>
-          <button
-            onClick={() => {
-              setAudioOff((prev) => !prev);
-              sellerUtils.muteAudio(localStream);
-            }}
-          >
-            Mute Audio
-          </button>
-        </div>
-      </div>
+    <div
+      class={`flex fixed top-[10%] left-[50%] translate-x-[-50%]  border rounded-md p-6`}
+    >
+      {contact
+        ? (
+          <>
+            <ContactCard contact={contact} handleJoin={handleJoin} />
+
+            <VideoModalSeller
+              localStream={localStream}
+              remoteVideo={remoteVideo}
+              myVideo={myVideo}
+              sellerUtils={sellerUtils}
+            />
+          </>
+        )
+        : (
+          <div>
+            <h1 class="text-xl font-semibold">Não houve contato</h1>
+          </div>
+        )}
     </div>
   );
 };
