@@ -1,3 +1,5 @@
+import { SellerType } from "$store/service/repositories/ISellerRepository.ts";
+
 export interface UserProfile {
   UserId: string;
   IsReturningUser: boolean;
@@ -30,7 +32,7 @@ export async function checkAuth() {
       Email: "hugo.correia@agenciam3.com",
     };
 
-    //TODO: login nao funciona. Fetch mockado
+    //login nao funciona. Fetch mockado
     // const data = (await response.json()) as UserProfile;
     console.log("utils.ts -> checkAuth -> data", data);
 
@@ -44,7 +46,20 @@ export async function checkAuth() {
   }
 }
 
+export async function checkSeller(email: string | undefined) {
+  try {
+    const resp = await fetch("/check-seller?" + email);
 
-export async function checkSeller(email: string){
-  //TODO: 
+    const sellerData: SellerType | false = await resp.json();
+
+    if (!sellerData) return { isSeller: false, sellerCategories: "" };
+
+    const { sellerCategoryIds, isSeller } = sellerData;
+
+    return { isSeller, sellerCategories: sellerCategoryIds };
+  } catch (error) {
+    console.log("utils.ts -> error", error);
+
+    return { isSeller: false, sellerCategories: "" };
+  }
 }
