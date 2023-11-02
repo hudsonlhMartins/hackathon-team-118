@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "preact/hooks";
 
+
 function ButtonCall() {
 
     const socket = useRef<any>(null)
@@ -17,17 +18,21 @@ function ButtonCall() {
         if(!socket.current){
             return
         }
-        socket.current.onmessage = (event) => {
+        socket.current.onmessage = (event:any) => {
             console.log('hello', event.data)
         };
         
     },[])
 
 
-
   return (
     <button onClick={()=>{
-        socket.current.send("ping");
+        socket.current.send(JSON.stringify({
+            type: 'store_user',
+            name: 'hudson',
+            username: 'hudson@gamil.com'
+            
+        }));
     }}>
         click
     </button>

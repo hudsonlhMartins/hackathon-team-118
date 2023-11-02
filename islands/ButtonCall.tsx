@@ -1,7 +1,7 @@
 import Component from "$store/components/Call.tsx";
 
 
-function Island(props: unkown) {
+function Island(props: any) {
   return <Component {...props} />;
 }
 
