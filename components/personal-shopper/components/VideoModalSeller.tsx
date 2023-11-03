@@ -1,4 +1,4 @@
-import { MutableRef, Ref, StateUpdater, useState } from "preact/hooks";
+import { MutableRef, Ref, StateUpdater, useRef, useState } from "preact/hooks";
 import SellerUtils from "$store/components/personal-shopper/utils/SellerUtils.ts";
 import { Suspense } from "preact/compat";
 import IconVideoOff from "https://deno.land/x/tabler_icons_tsx@0.0.5/tsx/video-off.tsx";
@@ -31,6 +31,8 @@ const VideoModalSeller = (
   const [videoOff, setVideoOff] = useState(false);
   const [audioOff, setAudioOff] = useState(false);
 
+  const connectionRef = useRef(sellerUtils?.current?.peerConn);
+
   return (
     <div
       class={`${modalOppened ? "block" : "hidden"} p-4 flex flex-col items-end`}
@@ -40,6 +42,7 @@ const VideoModalSeller = (
         onClick={() => {
           setContact(null);
           sellerUtils?.current?.closeCall();
+          connectionRef.current?.close();
         }}
       >
         <Suspense fallback={<></>}>
