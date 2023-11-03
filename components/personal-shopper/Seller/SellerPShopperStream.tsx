@@ -23,7 +23,6 @@ const SellerPShopperStream = () => {
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
-  
 
   const sellerUtils = useRef<SellerUtils | null>(null);
 
@@ -74,7 +73,7 @@ const SellerPShopperStream = () => {
 
   if (!showContent) {
     return (
-      <div class="fixed top-[10%] left-[50%] translate-x-[-50%]">
+      <div class="fixed top-[20%] left-[50%] translate-x-[-50%]">
         <Spinner />
       </div>
     );
@@ -82,7 +81,7 @@ const SellerPShopperStream = () => {
 
   return (
     <div
-      class={`flex fixed top-[10%] left-[50%] translate-x-[-50%]  border rounded-md p-6`}
+      class={`flex border rounded-md p-6 m-10`}
     >
       {contact
         ? (
