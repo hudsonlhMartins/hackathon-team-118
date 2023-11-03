@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "preact/hooks";
+
 import { SellerType } from "$store/service/repositories/ISellerRepository.ts";
 
 import {Product} from '$store/components/personal-shopper/types.ts'
@@ -7,7 +8,7 @@ import {Product} from '$store/components/personal-shopper/types.ts'
 export default function useCategorySeller(productId: string) {
 
   const [loading, setLoading] = useState(false)
-  const [hasSeller, setHasSeller] = useState(false)
+  const [hasSeller, setHasSeller] = useState(true)
 
   
 
@@ -26,8 +27,9 @@ export default function useCategorySeller(productId: string) {
    
   }
   const sellerVerify = useCallback(async()=>{
-    console.log("SellerVerify")
+  
     setLoading(true)
+  
     try{
       const res = await fetch('/list-sellers')
       const sellerList = await res.json() as SellerType[] | []
@@ -85,9 +87,12 @@ export default function useCategorySeller(productId: string) {
     sellerVerify()
   },[sellerVerify])
 
-  console.log('loading', loading)
+
 
   // TODO: validar se ha um vendedor para essa caregoria
   //pegando do tabela cliente o vendedor com o cluester de vendedor que tbm tem a flag de ativo. 
-  return { hasSeller, loading };
+  return { 
+    hasSeller, 
+    loading 
+  };
 }

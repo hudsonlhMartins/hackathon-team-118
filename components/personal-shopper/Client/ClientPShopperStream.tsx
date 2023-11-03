@@ -6,8 +6,9 @@ import {
 } from "$store/components/personal-shopper/utils/utils.ts";
 import { lazy, memo, Suspense } from "preact/compat";
 import Spinner from "$store/components/ui/Spinner.tsx";
-import useCategorySeller from "$store/components/personal-shopper/hooks/useCategorySeller.tsx";
+import useCategorySeller from "../hooks/useCategorySeller.ts";
 import useProduct from "$store/components/personal-shopper/hooks/useProduct.tsx";
+
 
 const VideoModal = lazy(() =>
   import(
@@ -27,6 +28,7 @@ const ClientPShopperStream = ({ productId }: Props) => {
   //TODO: ajustar re-render
   const prod = useProduct(productId);
   const { hasSeller, loading } =  useCategorySeller(productId);
+
 
   const handleClick = async () => {
     if (modalOpened) {
