@@ -15,7 +15,6 @@ export default function useCategorySeller(productId: string) {
     const url = `/api/catalog_system/pub/products/search/?fq=skuId:${productId}`
 
     try {
-
       const res = await fetch(url)
       const data = await res.json() as Product[]
 

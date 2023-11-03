@@ -7,6 +7,7 @@ import { Contact } from "$store/components/personal-shopper/types.ts";
 
 export default class SellerUtils extends BaseUtils {
   setContact: StateUpdater<Contact | null>;
+  sellerName: string | undefined;
   constructor(setContact: StateUpdater<Contact | null>) {
     super();
     this.setContact = setContact;
@@ -14,6 +15,7 @@ export default class SellerUtils extends BaseUtils {
 
   sendSellerName(sellerName: string, categoryList: string) {
     return new Promise<void>((resolve) => {
+      this.sellerName = sellerName;
       console.log("SellerName", sellerName);
       this._sendData({
         type: "store_seller",
@@ -28,6 +30,13 @@ export default class SellerUtils extends BaseUtils {
     return new Promise<void>((resolve) => {
       this.userName = userName;
       resolve();
+    });
+  }
+
+  closeCall() {
+    this._sendData({
+      type: "left_call",
+      sellerName: this.sellerName,
     });
   }
 

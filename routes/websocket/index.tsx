@@ -68,6 +68,7 @@ export const handler = async (
 
       case "store_seller":
         {
+          console.log("data", data)
           const newSeller = {
             conn: socket,
             sellerName: data.sellerName,
@@ -75,7 +76,7 @@ export const handler = async (
           };
 
           sellers.push(newSeller);
-          console.log("SELLERS----->", sellers);
+          // console.log("SELLERS----->", sellers);
 
           closeConnect(newSeller, socket);
         }

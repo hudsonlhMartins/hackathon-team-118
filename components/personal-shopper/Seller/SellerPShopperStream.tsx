@@ -2,12 +2,18 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import SellerUtils from "../utils/SellerUtils.ts";
 import { Contact } from "$store/components/personal-shopper/types.ts";
 import ContactCard from "$store/components/personal-shopper/components/ContactCard.tsx";
-import VideoModalSeller from "$store/islands/VideoModalSeller.tsx";
 import {
   checkAuth,
   checkSeller,
 } from "$store/components/personal-shopper/utils/utils.ts";
 import Spinner from "$store/components/ui/Spinner.tsx";
+import { lazy, Suspense } from "preact/compat";
+
+const VideoModalSeller = lazy(() =>
+  import(
+    "$store/islands/VideoModalSeller.tsx"
+  )
+);
 
 export interface Props {}
 const SellerPShopperStream = () => {
@@ -84,12 +90,15 @@ const SellerPShopperStream = () => {
           <>
             <ContactCard contact={contact} handleJoin={handleJoin} />
 
-            <VideoModalSeller
-              localStream={localStream}
-              remoteVideo={remoteVideo}
-              myVideo={myVideo}
-              sellerUtils={sellerUtils}
-            />
+            <Suspense fallback={<></>}>
+              <VideoModalSeller
+                localStream={localStream}
+                remoteVideo={remoteVideo}
+                myVideo={myVideo}
+                sellerUtils={sellerUtils}
+                setContact={setContact}
+              />
+            </Suspense>
           </>
         )
         : (

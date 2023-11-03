@@ -35,6 +35,12 @@ export default class ClientUtils extends BaseUtils {
     }
   }
 
+  closeCall() {
+    this._sendData({
+      type: "left_call",
+    });
+  }
+
   startCall(
     setLocalStream: StateUpdater<MediaStream | undefined>,
     myVideo: Ref<HTMLVideoElement>,

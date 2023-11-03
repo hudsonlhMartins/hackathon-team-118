@@ -27,6 +27,7 @@ export default abstract class BaseUtils {
   }
 
   protected abstract _handleSignallingData(data: any): void;
+  protected abstract _handleSignallingData(data: any): void;
 
   protected _sendData(data: any) {
     return new Promise<void>((resolve) => {
@@ -35,6 +36,8 @@ export default abstract class BaseUtils {
       resolve();
     });
   }
+
+  abstract closeCall(): void
 
   muteAudio(
     localStream: MediaStream | undefined,

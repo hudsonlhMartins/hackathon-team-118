@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import {
+  StateUpdater,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "preact/hooks";
 import { lazy, Suspense } from "preact/compat";
 import ClientUtils from "../utils/ClientUtils.ts";
 import { UserProfile } from "$store/components/personal-shopper/utils/utils.ts";
@@ -25,14 +31,22 @@ const IconEar = lazy(() =>
     "https://deno.land/x/tabler_icons_tsx@0.0.5/tsx/ear.tsx"
   )
 );
+const IconX = lazy(() =>
+  import(
+    "https://deno.land/x/tabler_icons_tsx@0.0.5/tsx/x.tsx"
+  )
+);
 
 export interface Props {
   userProfile: UserProfile;
   modalOpened: boolean;
   product: Product;
+  setUserProfile: StateUpdater<UserProfile | null | undefined>;
 }
 
-const VideoModal = ({ userProfile, modalOpened, product }: Props) => {
+const VideoModal = (
+  { userProfile, modalOpened, product, setUserProfile }: Props,
+) => {
   const [audioOff, setAudioOff] = useState(false);
   const [videoOff, setVideoOff] = useState(false);
   const [localStream, setLocalStream] = useState<MediaStream>();
@@ -58,7 +72,7 @@ const VideoModal = ({ userProfile, modalOpened, product }: Props) => {
       await clientUtils.sendUsername(
         userProfile.Email,
         { categoryId, productId, productName, link } as Product,
-        userProfile as UserInfo
+        userProfile as UserInfo,
       );
       clientUtils.startCall(setLocalStream, myVideo, remoteVideo);
     };
@@ -66,7 +80,21 @@ const VideoModal = ({ userProfile, modalOpened, product }: Props) => {
   }, [clientUtils, clientUtils.webSocket.readyState]);
 
   return (
-    <div class={`${modalOpened ? "block" : "hidden"} mb-5`}>
+    <div
+      class={`${modalOpened ? "block" : "hidden"} mb-5 flex flex-col items-end`}
+    >
+      <button
+        class="rounded-full bg-red-400 shadow-md p-1 m-1"
+        onClick={() => {
+          setUserProfile(null);
+          clientUtils.closeCall;
+          window.location.reload();
+        }}
+      >
+        <Suspense fallback={<></>}>
+          <IconX />
+        </Suspense>
+      </button>
       <div id="video-call-div" class="relative">
         <video
           ref={myVideo}
