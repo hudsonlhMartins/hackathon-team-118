@@ -7,10 +7,11 @@ export class MasterdataSellerRepository implements ISellerRepository {
 
   async updateStatus(email: string, status: boolean): Promise<boolean> {
     const data = await this.findByEmail(email);
+    console.log("MasterdataSellerRepository.ts -> data", data);
 
     if (!data) return false;
 
-    const { id, email: emailRes } = data;
+    const { id, email: emailRes } = data[0];
 
     const url = `${this.urlBase}/api/dataentities/CL/documents/${id}`;
 
@@ -28,6 +29,7 @@ export class MasterdataSellerRepository implements ISellerRepository {
       });
 
       const res = await updateStatus.json();
+      console.log("MasterdataSellerRepository.ts -> res", res);
 
       return true;
     } catch (err) {
@@ -35,7 +37,7 @@ export class MasterdataSellerRepository implements ISellerRepository {
     }
   }
 
-  async findByEmail(email: string): Promise<SellerType | false> {
+  async findByEmail(email: string): Promise<SellerType[] | false> {
     const url =
       `${this.urlBase}/api/dataentities/CL/search?email=${email}&_fields=isActive,email,userId,isSeller,sellerCategoryIds,id`;
 
@@ -48,7 +50,7 @@ export class MasterdataSellerRepository implements ISellerRepository {
         method: "GET",
       });
 
-      const data = await res.json() as SellerType;
+      const data = await res.json() as SellerType[];
 
       return data;
     } catch (err) {
@@ -56,10 +58,9 @@ export class MasterdataSellerRepository implements ISellerRepository {
     }
   }
 
-  async listSeller():Promise<SellerType | []>{
-
+  async listSeller(): Promise<SellerType | []> {
     const url =
-    `${this.urlBase}/api/dataentities/CL/search?isSeller=true&_fields=isActive,email,userId,isSeller,sellerCategoryIds,id`;
+      `${this.urlBase}/api/dataentities/CL/search?isSeller=true&_fields=isActive,email,userId,isSeller,sellerCategoryIds,id`;
 
     try {
       const res = await fetch(url, {
@@ -73,11 +74,8 @@ export class MasterdataSellerRepository implements ISellerRepository {
       const data = await res.json() as SellerType;
 
       return data;
-      
     } catch (err) {
-
       return [];
     }
-
   }
 }

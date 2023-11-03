@@ -8,7 +8,7 @@ export type SellerType = {
 };
 
 export interface ISellerRepository {
-  findByEmail(email: string): Promise<SellerType | false>;
+  findByEmail(email: string): Promise<SellerType[] | false>;
   updateStatus(email: string, status: boolean): Promise<boolean>;
   listSeller(): Promise<SellerType | []>
 }

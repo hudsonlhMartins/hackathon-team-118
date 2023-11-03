@@ -190,13 +190,8 @@ export const handler = async (
             return;
           }
   
-          sendData(
-            {
-              type: "offer",
-              offer: user.offer,
-            },
-            socket,
-          );
+          console.log(data)
+          
   
           user.candidates.forEach((candidate:any) => {
             sendData(

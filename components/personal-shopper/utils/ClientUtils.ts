@@ -37,7 +37,7 @@ export default class ClientUtils extends BaseUtils {
 
   closeCall() {
     this._sendData({
-      type: "left_call",
+      type: "leave_call",
     });
   }
 
