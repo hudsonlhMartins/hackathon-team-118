@@ -33,11 +33,12 @@ export default class SellerUtils extends BaseUtils {
     });
   }
 
-  closeCall() {
-    this._sendData({
+  async closeCall() {
+    await this._sendData({
       type: "leave_call",
       sellerName: this.sellerName,
     });
+    this.peerConn.close();
   }
 
   _handleSignallingData(data: any) {
@@ -109,7 +110,6 @@ export default class SellerUtils extends BaseUtils {
 
       this._sendData({
         type: "join_call",
-        sellerName: this.sellerName,
       });
     });
     // quando alguem conectar e adcionar um stream, o mesmo será exibido no video

@@ -53,12 +53,11 @@ const VideoModal = (
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
+  const clientUtils = useMemo(() => new ClientUtils(), []);
   //TODO: leave call com connectionRef.current.destroy()
-  // const connectionRef= useRef<any>(null)
+  const connectionRef = useRef(clientUtils.peerConn);
 
   const { categoryId, productId, productName, link } = product;
-
-  const clientUtils = useMemo(() => new ClientUtils(), []);
 
   useEffect(() => {
     if (!clientUtils) return;
@@ -87,8 +86,8 @@ const VideoModal = (
         class="rounded-full bg-red-400 shadow-md p-1 m-1"
         onClick={() => {
           setUserProfile(null);
-          clientUtils.closeCall;
-          window.location.reload();
+          clientUtils.closeCall();
+          connectionRef.current.close();
         }}
       >
         <Suspense fallback={<></>}>

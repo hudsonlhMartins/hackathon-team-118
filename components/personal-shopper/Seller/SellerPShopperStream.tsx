@@ -23,8 +23,7 @@ const SellerPShopperStream = () => {
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
-  //TODO: leave call com connectionRef.current.destroy()
-  // const connectionRef= useRef<any>(null)
+  
 
   const sellerUtils = useRef<SellerUtils | null>(null);
 
