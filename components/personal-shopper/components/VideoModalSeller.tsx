@@ -39,7 +39,7 @@ const VideoModalSeller = (
         class="rounded-full bg-red-400 shadow-md p-1 m-1"
         onClick={() => {
           setContact(null);
-          sellerUtils?.current?.closeCall;
+          sellerUtils?.current?.closeCall();
         }}
       >
         <Suspense fallback={<></>}>

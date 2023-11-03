@@ -87,8 +87,8 @@ const VideoModal = (
         class="rounded-full bg-red-400 shadow-md p-1 m-1"
         onClick={() => {
           setUserProfile(null);
-          clientUtils.closeCall;
-          window.location.reload();
+          clientUtils.closeCall();
+          //window.location.reload();
         }}
       >
         <Suspense fallback={<></>}>

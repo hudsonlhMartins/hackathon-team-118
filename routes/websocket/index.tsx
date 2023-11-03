@@ -13,7 +13,7 @@ const getPropsFromRequest = async (req: Request) => {
 };
 */ 
 
-let users:any = [];
+let users:any[] = [];
 let sellers:any[] = [];
 
 const masterdataSellerRepository = new MasterdataSellerRepository()
@@ -75,7 +75,6 @@ export const handler = async (
 
       case "store_seller":
         {
-          console.log("data", data)
           const newSeller = {
             conn: socket,
             sellerName: data.sellerName,
@@ -83,7 +82,7 @@ export const handler = async (
           };
 
           sellers.push(newSeller);
-          // console.log("SELLERS----->", sellers);
+
 
           await updateStatus(data.sellerName, true)
 
@@ -98,14 +97,7 @@ export const handler = async (
         }
         break
 
-      case "store_candidate":
-        if (user == null) {
-          return;
-        }
-        if (user.candidates == null) user.candidates = [];
 
-        user.candidates.push(data.candidate);
-        break;
       case "store_candidate":
         if (user == null) {
           return;
@@ -116,27 +108,11 @@ export const handler = async (
         break;
 
       case "send_answer":
-        console.log("USERaa");
-        console.log("USER", user);
+   
         if (user == null) {
           return;
         }
-        console.log("answer", data.answer);
-        sendData(
-          {
-            type: "answer",
-            answer: data.answer,
-          },
-          user.conn,
-        );
-        break;
-      case "send_answer":
-        console.log("USERaa");
-        console.log("USER", user);
-        if (user == null) {
-          return;
-        }
-        console.log("answer", data.answer);
+   
         sendData(
           {
             type: "answer",
@@ -189,19 +165,20 @@ export const handler = async (
           if (user == null) {
             return;
           }
-  
-          console.log(data)
           
-  
-          user.candidates.forEach((candidate:any) => {
-            sendData(
-              {
-                type: "candidate",
-                candidate: candidate,
-              },
-              socket,
-            );
-          });
+          console.log('data', data)
+
+          if('sellerName' in data){
+
+            return
+          }
+
+          const userIndex = users.findIndex((user:any) => user.username === data.username);
+
+          if(user < 0) return
+
+          users.splice(userIndex, 1)
+          user.conn.close()
   
           break;
 
