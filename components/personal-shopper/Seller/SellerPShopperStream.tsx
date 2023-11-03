@@ -80,9 +80,7 @@ const SellerPShopperStream = () => {
   }
 
   return (
-    <div
-      class={`flex border rounded-md p-6 m-10`}
-    >
+    <div class="flex border rounded-md p-6 my-10 flex-wrap max-w-[95vw] sm:p-1">
       {contact
         ? (
           <>
