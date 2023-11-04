@@ -22,10 +22,10 @@ export default abstract class BaseUtils {
     this.peerConn = new RTCPeerConnection(configuration);
 
     // this.webSocket = new WebSocket("ws://010e-2804-28d0-234-e800-24ae-c20e-d049-deb6.ngrok-free.app/websocket");
-    this.webSocket = new WebSocket(
-      "ws://e7ea-2804-28d0-234-e800-7969-705-ff84-f8ff.ngrok-free.app/websocket",
-    );
-    // this.webSocket = new WebSocket("ws://localhost:8000/websocket");
+    // this.webSocket = new WebSocket(
+    //   "ws://e7ea-2804-28d0-234-e800-7969-705-ff84-f8ff.ngrok-free.app/websocket",
+    // );
+    this.webSocket = new WebSocket("ws://localhost:8000/websocket");
     this.webSocket.onmessage = (event) => {
       this._handleSignallingData(JSON.parse(event.data));
     };

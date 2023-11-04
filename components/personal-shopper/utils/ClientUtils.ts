@@ -71,6 +71,12 @@ export default class ClientUtils extends BaseUtils {
         break;
       case "error":
         this.setContactActive({ active: false, message: data.message });
+        if (this.stream) {
+          this.stream.getTracks().forEach((track) => {
+            track.stop();
+          });
+        }
+
         break;
       case "candidate":
         this.peerConn.addIceCandidate(data.candidate);
