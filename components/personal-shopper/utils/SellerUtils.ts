@@ -9,6 +9,8 @@ export default class SellerUtils extends BaseUtils {
   setContact: StateUpdater<Contact | null>;
   sellerName: string | undefined;
   sellerCategories: string | undefined;
+
+
   constructor(
     setContact: StateUpdater<Contact | null>,
     sellerName: string,
@@ -19,6 +21,10 @@ export default class SellerUtils extends BaseUtils {
     this.sellerName = sellerName;
     this.sellerCategories = sellerCategories;
     this._init();
+  }
+
+   initialStream(stream:MediaStream){
+    this.stream = stream;
   }
 
   async _init() {
@@ -99,22 +105,11 @@ export default class SellerUtils extends BaseUtils {
     remoteVideo: Ref<HTMLVideoElement>,
   ) {
     //TODO: tirar o get media da função e colocar no on connect
+    const stream = this.stream
 
-    navigator.mediaDevices.getUserMedia({
-      video: {
-        frameRate: 24,
-        width: {
-          min: 480,
-          ideal: 720,
-          max: 1280,
-        },
-        aspectRatio: 1.33333,
-      },
-      audio: true,
-    }).then((stream) => {
       setLocalStream(stream);
-      this.stream = stream;
-      if (myVideo.current) myVideo.current.srcObject = stream;
+    
+      if(!stream) return
 
       stream.getTracks().forEach((track) => {
         this.peerConn.addTrack(track, stream);
@@ -135,7 +130,7 @@ export default class SellerUtils extends BaseUtils {
         type: "join_call",
         sellerName: this.sellerName,
       });
-    });
+    
     // quando alguem conectar e adcionar um stream, o mesmo será exibido no video
     this.peerConn.ontrack = (e) => {
       if (remoteVideo.current) {

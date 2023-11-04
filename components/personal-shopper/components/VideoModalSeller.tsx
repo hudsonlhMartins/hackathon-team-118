@@ -23,6 +23,7 @@ export interface Props {
   remoteVideo: Ref<HTMLVideoElement>;
   sellerUtils: MutableRef<SellerUtils | null>;
   setContact: StateUpdater<Contact | null>;
+  contact:Contact | null
 }
 
 const VideoModalSeller = (
@@ -33,10 +34,14 @@ const VideoModalSeller = (
     remoteVideo,
     sellerUtils,
     setContact,
+    contact
   }: Props,
 ) => {
   const [videoOff, setVideoOff] = useState(false);
   const [audioOff, setAudioOff] = useState(false);
+
+  const refStream = useRef<MediaStream | null>(null)
+  const refMyVideo =  useRef<HTMLVideoElement>(null);
 
   const connectionRef = useRef(sellerUtils?.current?.peerConn);
 
@@ -53,8 +58,12 @@ const VideoModalSeller = (
         aspectRatio: 1.33333,
       },
       audio: true,
+    }).then((stream)=>{
+      refStream.current = stream
+      refMyVideo.current!.srcObject = stream
+      sellerUtils.current?.initialStream(stream)
     })
-  }, [connectionRef.current?.connectionState]);
+  }, [contact?.productInfo]);
 
   return (
     <div
@@ -74,7 +83,7 @@ const VideoModalSeller = (
       </button>
       <div id="video-call-div" class="relative">
         <video
-          ref={myVideo}
+          ref={refMyVideo}
           muted
           id="local-video"
           autoPlay

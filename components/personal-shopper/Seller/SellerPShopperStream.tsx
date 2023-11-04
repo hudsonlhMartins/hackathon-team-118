@@ -82,6 +82,7 @@ const SellerPShopperStream = () => {
                 myVideo={myVideo}
                 sellerUtils={sellerUtils}
                 setContact={setContact}
+                contact={contact}
               />
             </Suspense>
           </>
