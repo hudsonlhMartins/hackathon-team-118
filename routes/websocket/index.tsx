@@ -20,6 +20,13 @@ interface sellerType  {
   categoryList: string,
   conn: any
 }
+interface userType  {
+  username: string
+  userInfo: string,
+  productInfo: string
+  sellerName?: string
+  conn: any
+}
 
 let users: any[] = [];
 let sellers: any[] = [];
@@ -50,19 +57,15 @@ export const handler = async (
       case "store_user":
         {
 
-          console.log("----------- store_user --------------------");
-
           
-            if (user != null) {
-              sendData({
-                type: "error",
-                message: "voce ja tem uma call em andamento"
-              }, socket);
-              return;
-            }
+          if (user != null) {
+            sendData({
+              type: "error",
+              message: "voce ja tem uma call em andamento"
+            }, socket);
+            return;
+          }
           
-          
-
 
           const newUser = {
             conn: socket,
@@ -86,10 +89,8 @@ export const handler = async (
                 return
               }
               const sellerCurrent = sellerBanco[0]
-              console.log('sellerCurrent.sellerCurrent', sellerCurrent)
-              if(!sellerCurrent.isActive){
 
-                console.log("!sellerCurrent.isActive")
+              if(!sellerCurrent.isActive){
 
                 sendData({
                   type: "error",
@@ -113,8 +114,6 @@ export const handler = async (
         break;
 
       case "store_seller":
-
-      //TODO: verifica se o seller ja esta no array de sellers se sim remove-lo
         {
           const newSeller = {
             conn: socket,
@@ -124,7 +123,6 @@ export const handler = async (
 
           sellers.push(newSeller);
 
-          console.log('----- store_seller ----', sellers)
           await updateStatus(data.sellerName, true);
 
           closeConnect(newSeller, socket);
@@ -203,12 +201,9 @@ export const handler = async (
         break;
 
       case "leave_call":
-        if (user == null) {
-          return;
-        }
-
+     
         if ("sellerName" in data) {
-          console.log('sellerName', data.sellerName);
+         
           await updateStatus(data.sellerName, true);
           return;
         }
@@ -234,10 +229,9 @@ export const handler = async (
 
 function closeConnect(data: any, conn: any) {
   conn.addEventListener("close", (event: any) => {
-    //TODO: ir no masterdata quando for seller e inativa o seller atual
 
     if ("sellerName" in data) {
-      console.log('close')
+      console.log(' -----  CLOSE SELLER-----')
       ;(async () => {
         await updateStatus(data.sellerName, false);
         const indexItem = sellers.findIndex((el: any) =>
@@ -247,7 +241,20 @@ function closeConnect(data: any, conn: any) {
 
         sellers.splice(indexItem, 1);
       })();
+
+      return
     }
+    
+    const userEmail = data.username
+    const indexItem = users.findIndex((el: userType) =>
+      el.username === userEmail
+    );
+
+    if (indexItem < 0) return;
+
+    users.splice(indexItem, 1);
+
+
   });
 }
 
