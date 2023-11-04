@@ -83,6 +83,7 @@ const SellerPShopperStream = () => {
                 sellerUtils={sellerUtils}
                 setContact={setContact}
                 contact={contact}
+                setLocalStream={setLocalStream}
               />
             </Suspense>
           </>

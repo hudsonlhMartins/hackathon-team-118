@@ -46,8 +46,12 @@ export default abstract class BaseUtils {
   muteAudio(
     localStream: MediaStream | undefined,
   ) {
+    console.log('localStream', localStream)
     if (!localStream) return;
     const audioTrack = localStream.getAudioTracks()[0];
+
+    console.log('aqui')
+
     if (audioTrack) {
       audioTrack.enabled = !audioTrack.enabled;
     }

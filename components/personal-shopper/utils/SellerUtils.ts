@@ -106,30 +106,28 @@ export default class SellerUtils extends BaseUtils {
   ) {
     //TODO: tirar o get media da função e colocar no on connect
     const stream = this.stream
+  
+    if(!stream) return
 
-      setLocalStream(stream);
-    
-      if(!stream) return
+    stream.getTracks().forEach((track) => {
+      this.peerConn.addTrack(track, stream);
+    });
 
-      stream.getTracks().forEach((track) => {
-        this.peerConn.addTrack(track, stream);
-      });
-
-      this.peerConn.onicecandidate = (e: any) => {
-        if (e.candidate == null) {
-          return;
-        }
-
-        this._sendData({
-          type: "send_candidate",
-          candidate: e.candidate,
-        });
-      };
+    this.peerConn.onicecandidate = (e: any) => {
+      if (e.candidate == null) {
+        return;
+      }
 
       this._sendData({
-        type: "join_call",
-        sellerName: this.sellerName,
+        type: "send_candidate",
+        candidate: e.candidate,
       });
+    };
+
+    this._sendData({
+      type: "join_call",
+      sellerName: this.sellerName,
+    });
     
     // quando alguem conectar e adcionar um stream, o mesmo será exibido no video
     this.peerConn.ontrack = (e) => {

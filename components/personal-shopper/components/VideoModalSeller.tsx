@@ -24,6 +24,7 @@ export interface Props {
   sellerUtils: MutableRef<SellerUtils | null>;
   setContact: StateUpdater<Contact | null>;
   contact:Contact | null
+  setLocalStream: StateUpdater<MediaStream | undefined>
 }
 
 const VideoModalSeller = (
@@ -34,7 +35,8 @@ const VideoModalSeller = (
     remoteVideo,
     sellerUtils,
     setContact,
-    contact
+    contact,
+    setLocalStream
   }: Props,
 ) => {
   const [videoOff, setVideoOff] = useState(false);
@@ -61,6 +63,7 @@ const VideoModalSeller = (
     }).then((stream)=>{
       refStream.current = stream
       refMyVideo.current!.srcObject = stream
+      setLocalStream(stream)
       sellerUtils.current?.initialStream(stream)
     })
   }, [contact?.productInfo]);
