@@ -1,9 +1,4 @@
-import {
-  StateUpdater,
-  useMemo,
-  useRef,
-  useState,
-} from "preact/hooks";
+import { StateUpdater, useMemo, useRef, useState } from "preact/hooks";
 import { lazy, Suspense } from "preact/compat";
 import ClientUtils from "../utils/ClientUtils.ts";
 import { Product, UserInfo } from "$store/components/personal-shopper/types.ts";
@@ -48,6 +43,10 @@ const VideoModal = (
   const [audioOff, setAudioOff] = useState(false);
   const [videoOff, setVideoOff] = useState(false);
   const [localStream, setLocalStream] = useState<MediaStream>();
+  const [contactActive, setContactActive] = useState({
+    active: true,
+    message: "",
+  });
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
@@ -58,6 +57,7 @@ const VideoModal = (
         userProfile,
         product,
         setLocalStream,
+        setContactActive,
         myVideo,
         remoteVideo,
       ),
@@ -66,6 +66,8 @@ const VideoModal = (
 
   const connectionRef = useRef(clientUtils.peerConn);
 
+  if (!contactActive.active) return <div>{contactActive.message}</div>;
+  console.log("connectionRef", connectionRef);
   return (
     <div
       class={`${modalOpened ? "block" : "hidden"} mb-5 flex flex-col items-end`}
@@ -107,6 +109,7 @@ const VideoModal = (
             class={`rounded-full ${
               videoOff ? "bg-red-400" : "bg-white"
             } shadow-md p-1 m-1`}
+            
           >
             {videoOff
               ? (
