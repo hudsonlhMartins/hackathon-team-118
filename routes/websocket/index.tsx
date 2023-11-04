@@ -12,12 +12,12 @@ const getPropsFromRequest = async (req: Request) => {
 
   return data ?? {};
 };
-*/ 
+*/
 
-let users:any[] = [];
-let sellers:any[] = [];
+let users: any[] = [];
+let sellers: any[] = [];
 
-const masterdataSellerRepository = new MasterdataSellerRepository()
+const masterdataSellerRepository = new MasterdataSellerRepository();
 export const handler = async (
   req: Request,
   ctx: HandlerContext<
@@ -28,21 +28,18 @@ export const handler = async (
   if (req.headers.get("upgrade") != "websocket") {
     return new Response(null, { status: 501 });
   }
-  const { socket, response,  } = Deno.upgradeWebSocket(req);
+  const { socket, response } = Deno.upgradeWebSocket(req);
 
   socket.addEventListener("open", () => {
     console.log("a client connected!");
   });
 
- 
   socket.addEventListener("message", async (event) => {
+    const data = JSON.parse(event.data);
 
-    const data = JSON.parse(event.data)
-    
-    const user = users.find((user:any) => user.username === data.username);
+    const user = users.find((user: any) => user.username === data.username);
 
-
-    switch (data.type){
+    switch (data.type) {
       case "store_user":
         {
           if (user != null) {
@@ -54,28 +51,24 @@ export const handler = async (
             userInfo: data.userInfo,
             username: data.username,
           };
-  
+
           users.push(newUser);
           closeConnect(newUser, socket);
 
-
-          sellers.forEach((element:any) => {
-            //TODO: arrumar category
-            if (element.categoryList.includes(data.product.categoryId)) {
-  
+          sellers.forEach((element: any) => {
+            if (
+              element.categoryList.includes("/" + data.product.categoryId + "/")
+            ) {
               sendData({
                 type: "contact",
                 userInfo: data.userInfo,
                 productInfo: data.product,
               }, element.conn);
-
-
             }
           });
-
         }
 
-        break
+        break;
 
       case "store_seller":
         {
@@ -87,20 +80,18 @@ export const handler = async (
 
           sellers.push(newSeller);
 
-
-          await updateStatus(data.sellerName, true)
+          await updateStatus(data.sellerName, true);
 
           closeConnect(newSeller, socket);
         }
-          break
+        break;
 
       case "store_offer":
         {
           if (user == null) return;
           user.offer = data.offer;
         }
-        break
-
+        break;
 
       case "store_candidate":
         if (user == null) {
@@ -112,11 +103,10 @@ export const handler = async (
         break;
 
       case "send_answer":
-   
         if (user == null) {
           return;
         }
-   
+
         sendData(
           {
             type: "answer",
@@ -139,14 +129,14 @@ export const handler = async (
           user.conn,
         );
         break;
-      
+
       case "join_call":
         if (user == null) {
           return;
         }
-        const email = data.sellerName
-      
-        updateStatus(email, false)
+        const email = data.sellerName;
+
+        updateStatus(email, false);
         sendData(
           {
             type: "offer",
@@ -155,8 +145,7 @@ export const handler = async (
           socket,
         );
 
-
-        user.candidates.forEach((candidate:any) => {
+        user.candidates.forEach((candidate: any) => {
           sendData(
             {
               type: "candidate",
@@ -172,56 +161,53 @@ export const handler = async (
         if (user == null) {
           return;
         }
-        
 
-        if('sellerName' in data){
-          updateStatus(data.sellerName, true)
-          return
+        if ("sellerName" in data) {
+          updateStatus(data.sellerName, true);
+          return;
         }
 
-        const userIndex = users.findIndex((user:any) => user.username === data.username);
+        const userIndex = users.findIndex((user: any) =>
+          user.username === data.username
+        );
 
-        if(user < 0) return
+        if (user < 0) return;
 
-        users.splice(userIndex, 1)
-        user.conn.close()
+        users.splice(userIndex, 1);
+        user.conn.close();
 
         break;
-        
+
       default:
-      break
+        break;
     }
-    
-    
   });
 
   return response;
 };
 
-
-function closeConnect(data:any, conn:any) {
-
-  conn.addEventListener("close", (event:any) => {
+function closeConnect(data: any, conn: any) {
+  conn.addEventListener("close", (event: any) => {
     //TODO: ir no masterdata quando for seller e inativa o seller atual
 
-    if('sellerName' in data) {
+    if ("sellerName" in data) {
+      (async () => {
+        await updateStatus(data.sellerName, false);
+        const indexItem = sellers.findIndex((el: any) =>
+          el.sellerName === data.sellerName
+        );
+        if (indexItem < 0) return;
 
-      ;(async()=>{
-        await updateStatus(data.sellerName, false)
-        const indexItem = sellers.findIndex((el:any)=> el.sellerName === data.sellerName)
-        if(indexItem < 0) return
-
-        sellers.splice(indexItem, 1)
-      })()
-
+        sellers.splice(indexItem, 1);
+      })();
     }
-  })
+  });
 }
 
-async function updateStatus(id:string,status:boolean){
-  await masterdataSellerRepository.updateStatus(id, status)
+async function updateStatus(id: string, status: boolean) {
+  await masterdataSellerRepository.updateStatus(id, status);
 }
 
-function sendData(data:any, conn:any) {
+function sendData(data: any, conn: any) {
   conn.send(JSON.stringify(data));
 }
