@@ -18,6 +18,7 @@ const getPropsFromRequest = async (req: Request) => {
 interface sellerType  {
   sellerName: string
   categoryList: string,
+  username?: string
   conn: any
 }
 interface userType  {
@@ -26,6 +27,7 @@ interface userType  {
   productInfo: string
   sellerName?: string
   conn: any
+  socketSellerConn?: any
 }
 
 let users: any[] = [];
@@ -79,6 +81,7 @@ export const handler = async (
 
          
 
+          //TODO: mudar de forEach para for of para podemos para o loop quando encontrar um seller que esta cadastrado nessa categoria
           sellers.forEach(async(element: sellerType) => {
             if (
               element.categoryList.includes("/" + data.product.categoryId + "/")
@@ -102,11 +105,21 @@ export const handler = async (
 
            
               await updateStatus(element.sellerName, false)
+
+
+              const findUserCurrent = users.findIndex((el:userType)=> el.username === data.username)
+              
+              if(findUserCurrent >= 0){
+             
+                users[findUserCurrent].socketSellerConn = element.conn
+              }
+
               sendData({
                 type: "contact",
                 userInfo: data.userInfo,
                 productInfo: data.product,
               }, element.conn);
+
             }
           });
         }
@@ -118,7 +131,7 @@ export const handler = async (
           const newSeller = {
             conn: socket,
             sellerName: data.sellerName,
-            categoryList: data.categoryList,
+            categoryList: data.categoryList
           };
 
           sellers.push(newSeller);
@@ -149,6 +162,7 @@ export const handler = async (
         if (user == null) {
           return;
         }
+        
 
         sendData(
           {
@@ -201,10 +215,20 @@ export const handler = async (
         break;
 
       case "leave_call":
-     
+        
+      {
         if ("sellerName" in data) {
          
           await updateStatus(data.sellerName, true);
+
+          sendData(
+            {
+              type: "error",
+              message: "seller leave call"
+            },
+            user.conn,
+          );
+
           return;
         }
 
@@ -212,10 +236,30 @@ export const handler = async (
           user.username === data.username
         );
 
+  
         if (user < 0) return;
+        const userCurrent = users[userIndex]
+
+       
+        if(userCurrent.socketSellerConn){
+          sendData(
+            {
+              type: "error",
+              message: "client leave call"
+            },
+            userCurrent.socketSellerConn,
+          );
+
+        }
 
         users.splice(userIndex, 1);
         user.conn.close();
+
+        
+  
+
+        
+      }
 
         break;
 
