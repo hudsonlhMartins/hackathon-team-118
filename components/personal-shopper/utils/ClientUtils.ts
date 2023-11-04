@@ -9,12 +9,20 @@ export default class ClientUtils extends BaseUtils {
   userProfile: UserInfo;
   product: Product;
   setLocalStream: StateUpdater<MediaStream | undefined>;
+  setContactActive: StateUpdater<{
+    active: boolean;
+    message: string;
+  }>;
   myVideo: Ref<HTMLVideoElement>;
   remoteVideo: Ref<HTMLVideoElement>;
   constructor(
     userProfile: UserInfo,
     product: Product,
     setLocalStream: StateUpdater<MediaStream | undefined>,
+    setContactActive: StateUpdater<{
+      active: boolean;
+      message: string;
+    }>,
     myVideo: Ref<HTMLVideoElement>,
     remoteVideo: Ref<HTMLVideoElement>,
   ) {
@@ -22,6 +30,7 @@ export default class ClientUtils extends BaseUtils {
     this.userProfile = userProfile;
     this.product = product;
     this.setLocalStream = setLocalStream;
+    this.setContactActive = setContactActive;
     this.myVideo = myVideo;
     this.remoteVideo = remoteVideo;
     this._init();
@@ -59,6 +68,10 @@ export default class ClientUtils extends BaseUtils {
         break;
       case "answer":
         this.peerConn.setRemoteDescription(data.answer);
+        break;
+      case "error":
+        console.log("contact_seller_inactive");
+        this.setContactActive({ active: false, message: data.message });
         break;
       case "candidate":
         this.peerConn.addIceCandidate(data.candidate);
