@@ -18,13 +18,13 @@ export default class SellerUtils extends BaseUtils {
     this.setContact = setContact;
     this.sellerName = sellerName;
     this.sellerCategories = sellerCategories;
-    this._initializeSeller();
+    this._init();
   }
 
-  private async _initializeSeller() {
+  async _init() {
     if (this.webSocket.readyState !== 1) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      this._initializeSeller();
+      this._init();
       return;
     }
     await this.sendSellerName();

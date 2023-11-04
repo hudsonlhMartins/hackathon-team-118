@@ -6,8 +6,39 @@ import {
 import { Product, UserInfo } from "$store/components/personal-shopper/types.ts";
 
 export default class ClientUtils extends BaseUtils {
-  constructor() {
+  userProfile: UserInfo;
+  product: Product;
+  setLocalStream: StateUpdater<MediaStream | undefined>;
+  myVideo: Ref<HTMLVideoElement>;
+  remoteVideo: Ref<HTMLVideoElement>;
+  constructor(
+    userProfile: UserInfo,
+    product: Product,
+    setLocalStream: StateUpdater<MediaStream | undefined>,
+    myVideo: Ref<HTMLVideoElement>,
+    remoteVideo: Ref<HTMLVideoElement>,
+  ) {
     super();
+    this.userProfile = userProfile;
+    this.product = product;
+    this.setLocalStream = setLocalStream;
+    this.myVideo = myVideo;
+    this.remoteVideo = remoteVideo;
+    this._init();
+  }
+
+  async _init() {
+    if (this.webSocket.readyState !== 1) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      this._init();
+      return;
+    }
+    await this.sendUsername(
+      this.userProfile.Email,
+      this.product,
+      this.userProfile,
+    );
+    this.startCall();
   }
 
   sendUsername(userName: string, product: Product, userInfo: UserInfo) {
@@ -25,7 +56,6 @@ export default class ClientUtils extends BaseUtils {
   protected _handleSignallingData(data: any) {
     switch (data.type) {
       case "contact":
-        console.log("AAAAAAA");
         break;
       case "answer":
         this.peerConn.setRemoteDescription(data.answer);
@@ -41,11 +71,7 @@ export default class ClientUtils extends BaseUtils {
     });
   }
 
-  startCall(
-    setLocalStream: StateUpdater<MediaStream | undefined>,
-    myVideo: Ref<HTMLVideoElement>,
-    remoteVideo: Ref<HTMLVideoElement>,
-  ) {
+  startCall() {
     navigator.mediaDevices.getUserMedia({
       video: {
         frameRate: 24,
@@ -58,8 +84,8 @@ export default class ClientUtils extends BaseUtils {
       },
       audio: true,
     }).then((stream) => {
-      setLocalStream(stream);
-      if (myVideo.current) myVideo.current.srcObject = stream;
+      this.setLocalStream(stream);
+      if (this.myVideo.current) this.myVideo.current.srcObject = stream;
 
       stream.getTracks().forEach((track) => {
         this.peerConn.addTrack(track, stream);
@@ -79,8 +105,8 @@ export default class ClientUtils extends BaseUtils {
     });
     // quando alguem conectar e adcionar um stream, o mesmo será exibido no video
     this.peerConn.ontrack = (e) => {
-      if (remoteVideo.current) {
-        remoteVideo.current.srcObject = e.streams[0];
+      if (this.remoteVideo.current) {
+        this.remoteVideo.current.srcObject = e.streams[0];
       }
     };
   }

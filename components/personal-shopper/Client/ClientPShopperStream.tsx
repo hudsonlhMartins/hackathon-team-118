@@ -1,14 +1,11 @@
 import { useEffect, useState } from "preact/hooks";
 import Button from "$store/components/ui/Button.tsx";
-import {
-  checkAuth,
-  UserProfile,
-} from "$store/components/personal-shopper/utils/utils.ts";
+import { checkAuth } from "$store/components/personal-shopper/utils/utils.ts";
 import { lazy, memo, Suspense } from "preact/compat";
 import Spinner from "$store/components/ui/Spinner.tsx";
 import useCategorySeller from "../hooks/useCategorySeller.ts";
 import useProduct from "$store/components/personal-shopper/hooks/useProduct.tsx";
-
+import { UserInfo } from "$store/components/personal-shopper/types.ts";
 
 const VideoModal = lazy(() =>
   import(
@@ -23,12 +20,11 @@ export interface Props {
 const ClientPShopperStream = ({ productId }: Props) => {
   const [isAuth, setIsAuth] = useState(false);
   const [modalOpened, setModalOpened] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>();
+  const [userProfile, setUserProfile] = useState<UserInfo | null>();
   const [btnLoading, setBtnLoading] = useState(false);
   //TODO: ajustar re-render
   const prod = useProduct(productId);
-  const { hasSeller, loading } =  useCategorySeller(productId);
-
+  const { hasSeller, loading } = useCategorySeller(productId);
 
   const handleClick = async () => {
     if (modalOpened) {
@@ -37,9 +33,9 @@ const ClientPShopperStream = ({ productId }: Props) => {
     }
     if (!isAuth) {
       setBtnLoading(true);
-      const { auth, profileData } = await checkAuth() as {
+      const { auth, profileData } = await checkAuth() as unknown as {
         auth: boolean;
-        profileData: UserProfile;
+        profileData: UserInfo;
       };
 
       if (!auth) {
@@ -56,7 +52,6 @@ const ClientPShopperStream = ({ productId }: Props) => {
   //   console.log("PRODID", productId);
   //   console.log("PROD", prod);
   // }, [prod]);
-
 
   console.log("hasSeller", hasSeller);
 
