@@ -67,7 +67,7 @@ const VideoModal = (
   const connectionRef = useRef(clientUtils.peerConn);
 
   if (!contactActive.active) return <div>{contactActive.message}</div>;
-
+  console.log("connectionRef", connectionRef);
   return (
     <div
       class={`${modalOpened ? "block" : "hidden"} mb-5 flex flex-col items-end`}
@@ -109,6 +109,7 @@ const VideoModal = (
             class={`rounded-full ${
               videoOff ? "bg-red-400" : "bg-white"
             } shadow-md p-1 m-1`}
+            
           >
             {videoOff
               ? (

@@ -53,16 +53,10 @@ export default class SellerUtils extends BaseUtils {
       type: "leave_call",
       sellerName: this.sellerName,
     });
-    this.peerConn.close();
-    if (this.stream) {
-      this.stream.getTracks().forEach((track) => {
-        track.stop();
-      });
-    }
+    window.location.reload();
   }
 
   _handleSignallingData(data: any) {
-    console.log("ois");
     switch (data.type) {
       case "offer":
         this.peerConn.setRemoteDescription(data.offer);
@@ -71,8 +65,15 @@ export default class SellerUtils extends BaseUtils {
       case "answer":
         this.peerConn.setRemoteDescription(data.answer);
         break;
+      case "error":
+        this.setContact(null);
+        alert("Cliente encerrou a conexão");
+        window.location.reload();
+        break;
       case "contact":
         this.setContact(data);
+        console.log("data.userInfo.Email", data.userInfo.Email);
+        this.userName = data.userInfo.Email;
         break;
       case "candidate":
         this.peerConn.addIceCandidate(data.candidate);
@@ -85,6 +86,7 @@ export default class SellerUtils extends BaseUtils {
       this._sendData({
         type: "send_answer",
         answer: answer,
+        sellerName: this.sellerName,
       });
     }, (error: any) => {
       console.log(error);
@@ -131,7 +133,7 @@ export default class SellerUtils extends BaseUtils {
 
       this._sendData({
         type: "join_call",
-        sellerName: this.sellerName
+        sellerName: this.sellerName,
       });
     });
     // quando alguem conectar e adcionar um stream, o mesmo será exibido no video

@@ -70,7 +70,6 @@ export default class ClientUtils extends BaseUtils {
         this.peerConn.setRemoteDescription(data.answer);
         break;
       case "error":
-        console.log("contact_seller_inactive");
         this.setContactActive({ active: false, message: data.message });
         break;
       case "candidate":
