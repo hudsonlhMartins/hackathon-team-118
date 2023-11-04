@@ -8,19 +8,34 @@ import { Contact } from "$store/components/personal-shopper/types.ts";
 export default class SellerUtils extends BaseUtils {
   setContact: StateUpdater<Contact | null>;
   sellerName: string | undefined;
-  constructor(setContact: StateUpdater<Contact | null>) {
+  sellerCategories: string | undefined;
+  constructor(
+    setContact: StateUpdater<Contact | null>,
+    sellerName: string,
+    sellerCategories: string,
+  ) {
     super();
     this.setContact = setContact;
+    this.sellerName = sellerName;
+    this.sellerCategories = sellerCategories;
+    this._initializeSeller();
   }
 
-  sendSellerName(sellerName: string, categoryList: string) {
+  private async _initializeSeller() {
+    if (this.webSocket.readyState !== 1) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      this._initializeSeller();
+      return;
+    }
+    await this.sendSellerName();
+  }
+
+  sendSellerName() {
     return new Promise<void>((resolve) => {
-      this.sellerName = sellerName;
-      console.log("SellerName", sellerName);
       this._sendData({
         type: "store_seller",
-        sellerName,
-        categoryList,
+        sellerName: this.sellerName,
+        categoryList: this.sellerCategories,
       });
       resolve();
     });

@@ -45,28 +45,17 @@ const SellerPShopperStream = () => {
 
       const { isSeller, sellerCategories } = await checkSeller(authEmail);
 
-      console.log("SellerPShopperStream.tsx -> isSeller: asdasdasd", isSeller);
-
       if (!isSeller) {
         window.location.pathname = "/";
         return;
       }
       setShowContent(true);
 
-      sellerUtils.current = new SellerUtils(setContact);
-
-      const initializeSeller = async () => {
-        if (sellerUtils?.current?.webSocket.readyState !== 1) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          initializeSeller();
-          return;
-        }
-        await sellerUtils?.current?.sendSellerName(
-          authEmail as string,
-          sellerCategories,
-        );
-      };
-      initializeSeller();
+      sellerUtils.current = new SellerUtils(
+        setContact,
+        authEmail as string,
+        sellerCategories,
+      );
     };
     checkSellerAuth();
   }, [sellerUtils]);
