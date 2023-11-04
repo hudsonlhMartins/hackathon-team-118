@@ -1,6 +1,5 @@
 import {
   StateUpdater,
-  useEffect,
   useMemo,
   useRef,
   useState,

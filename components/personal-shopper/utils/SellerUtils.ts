@@ -54,6 +54,11 @@ export default class SellerUtils extends BaseUtils {
       sellerName: this.sellerName,
     });
     this.peerConn.close();
+    if (this.stream) {
+      this.stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
   }
 
   _handleSignallingData(data: any) {
@@ -106,6 +111,7 @@ export default class SellerUtils extends BaseUtils {
       audio: true,
     }).then((stream) => {
       setLocalStream(stream);
+      this.stream = stream;
       if (myVideo.current) myVideo.current.srcObject = stream;
 
       stream.getTracks().forEach((track) => {

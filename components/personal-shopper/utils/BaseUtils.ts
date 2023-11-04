@@ -4,6 +4,7 @@ export default abstract class BaseUtils {
   userName: string | null = null;
   peerConn: RTCPeerConnection;
   webSocket: WebSocket;
+  stream?: MediaStream
 
   constructor() {
     const configuration: RTCConfiguration = {

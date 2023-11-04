@@ -69,6 +69,11 @@ export default class ClientUtils extends BaseUtils {
     this._sendData({
       type: "leave_call",
     });
+    if (this.stream) {
+      this.stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
   }
 
   startCall() {
@@ -84,7 +89,9 @@ export default class ClientUtils extends BaseUtils {
       },
       audio: true,
     }).then((stream) => {
+      this.stream = stream;
       this.setLocalStream(stream);
+
       if (this.myVideo.current) this.myVideo.current.srcObject = stream;
 
       stream.getTracks().forEach((track) => {
