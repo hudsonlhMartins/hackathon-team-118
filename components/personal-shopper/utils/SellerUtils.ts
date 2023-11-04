@@ -131,6 +131,7 @@ export default class SellerUtils extends BaseUtils {
 
       this._sendData({
         type: "join_call",
+        sellerName: this.sellerName
       });
     });
     // quando alguem conectar e adcionar um stream, o mesmo será exibido no video
