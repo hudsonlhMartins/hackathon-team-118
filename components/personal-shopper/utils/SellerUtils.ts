@@ -8,19 +8,34 @@ import { Contact } from "$store/components/personal-shopper/types.ts";
 export default class SellerUtils extends BaseUtils {
   setContact: StateUpdater<Contact | null>;
   sellerName: string | undefined;
-  constructor(setContact: StateUpdater<Contact | null>) {
+  sellerCategories: string | undefined;
+  constructor(
+    setContact: StateUpdater<Contact | null>,
+    sellerName: string,
+    sellerCategories: string,
+  ) {
     super();
     this.setContact = setContact;
+    this.sellerName = sellerName;
+    this.sellerCategories = sellerCategories;
+    this._init();
   }
 
-  sendSellerName(sellerName: string, categoryList: string) {
+  async _init() {
+    if (this.webSocket.readyState !== 1) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      this._init();
+      return;
+    }
+    await this.sendSellerName();
+  }
+
+  sendSellerName() {
     return new Promise<void>((resolve) => {
-      this.sellerName = sellerName;
-      console.log("SellerName", sellerName);
       this._sendData({
         type: "store_seller",
-        sellerName,
-        categoryList,
+        sellerName: this.sellerName,
+        categoryList: this.sellerCategories,
       });
       resolve();
     });
@@ -39,6 +54,11 @@ export default class SellerUtils extends BaseUtils {
       sellerName: this.sellerName,
     });
     this.peerConn.close();
+    if (this.stream) {
+      this.stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
   }
 
   _handleSignallingData(data: any) {
@@ -91,6 +111,7 @@ export default class SellerUtils extends BaseUtils {
       audio: true,
     }).then((stream) => {
       setLocalStream(stream);
+      this.stream = stream;
       if (myVideo.current) myVideo.current.srcObject = stream;
 
       stream.getTracks().forEach((track) => {

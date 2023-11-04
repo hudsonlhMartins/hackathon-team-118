@@ -4,6 +4,7 @@ export default abstract class BaseUtils {
   userName: string | null = null;
   peerConn: RTCPeerConnection;
   webSocket: WebSocket;
+  stream?: MediaStream
 
   constructor() {
     const configuration: RTCConfiguration = {
@@ -19,7 +20,7 @@ export default abstract class BaseUtils {
     };
 
     this.peerConn = new RTCPeerConnection(configuration);
-    
+
     // this.webSocket = new WebSocket("ws://010e-2804-28d0-234-e800-24ae-c20e-d049-deb6.ngrok-free.app/websocket");
     this.webSocket = new WebSocket("ws://localhost:8000/websocket");
     this.webSocket.onmessage = (event) => {
@@ -28,7 +29,7 @@ export default abstract class BaseUtils {
   }
 
   protected abstract _handleSignallingData(data: any): void;
-  protected abstract _handleSignallingData(data: any): void;
+  protected abstract _init(): void;
 
   protected _sendData(data: any) {
     return new Promise<void>((resolve) => {
@@ -38,7 +39,7 @@ export default abstract class BaseUtils {
     });
   }
 
-  abstract closeCall(): void
+  abstract closeCall(): void;
 
   muteAudio(
     localStream: MediaStream | undefined,

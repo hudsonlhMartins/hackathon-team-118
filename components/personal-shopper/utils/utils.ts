@@ -1,15 +1,5 @@
 import { SellerType } from "$store/service/repositories/ISellerRepository.ts";
 
-export interface UserProfile {
-  UserId: string;
-  IsReturningUser: boolean;
-  IsUserDefined: boolean;
-  IsPJ: boolean;
-  FirstName: string;
-  LastName: string;
-  Gender: string | null;
-  Email: string;
-}
 
 export async function checkAuth() {
   const url = "/no-cache/profileSystem/getProfile";
@@ -33,7 +23,7 @@ export async function checkAuth() {
     };
 
     //login nao funciona. Fetch mockado
-    // const data = (await response.json()) as UserProfile;
+    // const data = (await response.json());
     console.log("utils.ts -> checkAuth -> data", data);
 
     return {

@@ -1,13 +1,11 @@
 import {
   StateUpdater,
-  useEffect,
   useMemo,
   useRef,
   useState,
 } from "preact/hooks";
 import { lazy, Suspense } from "preact/compat";
 import ClientUtils from "../utils/ClientUtils.ts";
-import { UserProfile } from "$store/components/personal-shopper/utils/utils.ts";
 import { Product, UserInfo } from "$store/components/personal-shopper/types.ts";
 
 const IconVideoOff = lazy(() =>
@@ -38,10 +36,10 @@ const IconX = lazy(() =>
 );
 
 export interface Props {
-  userProfile: UserProfile;
+  userProfile: UserInfo;
   modalOpened: boolean;
   product: Product;
-  setUserProfile: StateUpdater<UserProfile | null | undefined>;
+  setUserProfile: StateUpdater<UserInfo | null | undefined>;
 }
 
 const VideoModal = (
@@ -53,30 +51,20 @@ const VideoModal = (
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
-  const clientUtils = useMemo(() => new ClientUtils(), []);
-  //TODO: leave call com connectionRef.current.destroy()
+
+  const clientUtils = useMemo(
+    () =>
+      new ClientUtils(
+        userProfile,
+        product,
+        setLocalStream,
+        myVideo,
+        remoteVideo,
+      ),
+    [],
+  );
+
   const connectionRef = useRef(clientUtils.peerConn);
-
-  const { categoryId, productId, productName, link } = product;
-
-  useEffect(() => {
-    if (!clientUtils) return;
-
-    const initializeCall = async () => {
-      if (clientUtils.webSocket.readyState !== 1) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        initializeCall();
-        return;
-      }
-      await clientUtils.sendUsername(
-        userProfile.Email,
-        { categoryId, productId, productName, link } as Product,
-        userProfile as UserInfo,
-      );
-      clientUtils.startCall(setLocalStream, myVideo, remoteVideo);
-    };
-    initializeCall();
-  }, [clientUtils, clientUtils.webSocket.readyState]);
 
   return (
     <div
