@@ -7,7 +7,6 @@ export class MasterdataSellerRepository implements ISellerRepository {
 
   async updateStatus(email: string, status: boolean): Promise<boolean> {
     const data = await this.findByEmail(email);
-    console.log("MasterdataSellerRepository.ts -> data", data);
 
     if (!data) return false;
 
@@ -29,7 +28,6 @@ export class MasterdataSellerRepository implements ISellerRepository {
       });
 
       const res = await updateStatus.json();
-      console.log("MasterdataSellerRepository.ts -> res", res);
 
       return true;
     } catch (err) {

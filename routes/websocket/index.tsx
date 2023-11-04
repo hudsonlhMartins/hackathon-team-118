@@ -2,6 +2,7 @@ import { HandlerContext, PageProps } from "$fresh/server.ts";
 import { DecoSiteState, DecoState } from "deco/types.ts";
 import { MasterdataSellerRepository } from "$store/service/repositories/implementations/MasterdataSellerRepository.ts";
 import { FalseLiteral } from "https://deno.land/x/ts_morph@17.0.1/ts_morph.js";
+import { SellerType } from "$store/service/repositories/ISellerRepository.ts";
 
 /*
 const getPropsFromRequest = async (req: Request) => {
@@ -13,6 +14,21 @@ const getPropsFromRequest = async (req: Request) => {
   return data ?? {};
 };
 */
+
+interface sellerType  {
+  sellerName: string
+  categoryList: string,
+  username?: string
+  conn: any
+}
+interface userType  {
+  username: string
+  userInfo: string,
+  productInfo: string
+  sellerName?: string
+  conn: any
+  socketSellerConn?: any
+}
 
 let users: any[] = [];
 let sellers: any[] = [];
@@ -42,9 +58,17 @@ export const handler = async (
     switch (data.type) {
       case "store_user":
         {
+
+          
           if (user != null) {
+            sendData({
+              type: "error",
+              message: "voce ja tem uma call em andamento"
+            }, socket);
             return;
           }
+          
+
           const newUser = {
             conn: socket,
             productInfo: data.product,
@@ -55,15 +79,47 @@ export const handler = async (
           users.push(newUser);
           closeConnect(newUser, socket);
 
-          sellers.forEach((element: any) => {
+         
+
+          //TODO: mudar de forEach para for of para podemos para o loop quando encontrar um seller que esta cadastrado nessa categoria
+          sellers.forEach(async(element: sellerType) => {
             if (
               element.categoryList.includes("/" + data.product.categoryId + "/")
             ) {
+
+              const sellerBanco = await findSellerBanco(element.sellerName)
+              if(!sellerBanco || !sellerBanco.length){
+                return
+              }
+              const sellerCurrent = sellerBanco[0]
+
+              if(!sellerCurrent.isActive){
+
+                sendData({
+                  type: "error",
+                  message: "seller ja esta em uma call"
+                }, socket);
+
+                return
+              }
+
+           
+              await updateStatus(element.sellerName, false)
+
+
+              const findUserCurrent = users.findIndex((el:userType)=> el.username === data.username)
+              
+              if(findUserCurrent >= 0){
+             
+                users[findUserCurrent].socketSellerConn = element.conn
+              }
+
               sendData({
                 type: "contact",
                 userInfo: data.userInfo,
                 productInfo: data.product,
               }, element.conn);
+
             }
           });
         }
@@ -75,7 +131,7 @@ export const handler = async (
           const newSeller = {
             conn: socket,
             sellerName: data.sellerName,
-            categoryList: data.categoryList,
+            categoryList: data.categoryList
           };
 
           sellers.push(newSeller);
@@ -106,6 +162,7 @@ export const handler = async (
         if (user == null) {
           return;
         }
+        
 
         sendData(
           {
@@ -136,7 +193,7 @@ export const handler = async (
         }
         const email = data.sellerName;
 
-        updateStatus(email, false);
+        await updateStatus(email, false);
         sendData(
           {
             type: "offer",
@@ -158,12 +215,20 @@ export const handler = async (
         break;
 
       case "leave_call":
-        if (user == null) {
-          return;
-        }
-
+        
+      {
         if ("sellerName" in data) {
-          updateStatus(data.sellerName, true);
+         
+          await updateStatus(data.sellerName, true);
+
+          sendData(
+            {
+              type: "error",
+              message: "seller leave call"
+            },
+            user.conn,
+          );
+
           return;
         }
 
@@ -171,10 +236,30 @@ export const handler = async (
           user.username === data.username
         );
 
+  
         if (user < 0) return;
+        const userCurrent = users[userIndex]
+
+       
+        if(userCurrent.socketSellerConn){
+          sendData(
+            {
+              type: "error",
+              message: "client leave call"
+            },
+            userCurrent.socketSellerConn,
+          );
+
+        }
 
         users.splice(userIndex, 1);
         user.conn.close();
+
+        
+  
+
+        
+      }
 
         break;
 
@@ -188,10 +273,10 @@ export const handler = async (
 
 function closeConnect(data: any, conn: any) {
   conn.addEventListener("close", (event: any) => {
-    //TODO: ir no masterdata quando for seller e inativa o seller atual
 
     if ("sellerName" in data) {
-      (async () => {
+      console.log(' -----  CLOSE SELLER-----')
+      ;(async () => {
         await updateStatus(data.sellerName, false);
         const indexItem = sellers.findIndex((el: any) =>
           el.sellerName === data.sellerName
@@ -200,12 +285,29 @@ function closeConnect(data: any, conn: any) {
 
         sellers.splice(indexItem, 1);
       })();
+
+      return
     }
+    
+    const userEmail = data.username
+    const indexItem = users.findIndex((el: userType) =>
+      el.username === userEmail
+    );
+
+    if (indexItem < 0) return;
+
+    users.splice(indexItem, 1);
+
+
   });
 }
 
 async function updateStatus(id: string, status: boolean) {
   await masterdataSellerRepository.updateStatus(id, status);
+}
+
+async function findSellerBanco(email:string): Promise<SellerType[] | false> {
+ return await masterdataSellerRepository.findByEmail(email);
 }
 
 function sendData(data: any, conn: any) {

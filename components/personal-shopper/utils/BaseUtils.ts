@@ -21,7 +21,6 @@ export default abstract class BaseUtils {
 
     this.peerConn = new RTCPeerConnection(configuration);
 
-    // this.webSocket = new WebSocket("ws://010e-2804-28d0-234-e800-24ae-c20e-d049-deb6.ngrok-free.app/websocket");
     // this.webSocket = new WebSocket(
     //   "ws://e7ea-2804-28d0-234-e800-7969-705-ff84-f8ff.ngrok-free.app/websocket",
     // );
@@ -47,8 +46,12 @@ export default abstract class BaseUtils {
   muteAudio(
     localStream: MediaStream | undefined,
   ) {
+    console.log("localStream", localStream);
     if (!localStream) return;
     const audioTrack = localStream.getAudioTracks()[0];
+
+    console.log("aqui");
+
     if (audioTrack) {
       audioTrack.enabled = !audioTrack.enabled;
     }
