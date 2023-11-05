@@ -59,7 +59,6 @@ export default class ClientUtils extends BaseUtils {
   }
 
   sendChatMessage(message: string) {
-    alert(message);
     this._sendData({
       type: "chat_message",
       from: this.userName,

@@ -44,6 +44,11 @@ const IconArrowsMinimize = lazy(() =>
     "https://deno.land/x/tabler_icons_tsx@0.0.5/tsx/arrows-minimize.tsx"
   )
 );
+const IconMessage = lazy(() =>
+  import(
+    "https://deno.land/x/tabler_icons_tsx@0.0.5/tsx/message.tsx"
+  )
+);
 
 export interface Props {
   userProfile: UserInfo;
@@ -58,6 +63,7 @@ const VideoModal = (
   const [audioOff, setAudioOff] = useState(false);
   const [videoOff, setVideoOff] = useState(false);
   const [videoFull, setVideoFull] = useState(false);
+  const [chatOpen, setChatOpen] = useState(true);
   const [localStream, setLocalStream] = useState<MediaStream>();
   const [contactActive, setContactActive] = useState({
     active: true,
@@ -88,6 +94,9 @@ const VideoModal = (
 
   const connectionRef = useRef(clientUtils.peerConn);
 
+
+  
+
   if (!contactActive.active) {
     alert(contactActive.message);
     return <></>;
@@ -98,17 +107,21 @@ const VideoModal = (
         modalOpened ? "block" : "hidden"
       } mb-5 flex flex-col items-end max-w-[90vw]`}
     >
-      <Chat
-        messages={messages}
-        handleSendMessage={handeMessage}
-        user="client"
-      />
+      {chatOpen &&
+        (
+          <Chat
+            messages={messages}
+            handleSendMessage={handeMessage}
+            user="client"
+          />
+        )}
       <div class="flex justify-between w-full">
         <div>
           <button
             class="rounded-full bg-white shadow-md p-1 m-1"
             onClick={() => {
               setVideoFull((prev) => !prev);
+              setChatOpen(false);
             }}
           >
             {videoFull
@@ -122,6 +135,17 @@ const VideoModal = (
                   <IconArrowsMaximize />
                 </Suspense>
               )}
+          </button>
+          <button
+            class="rounded-full bg-white shadow-md p-1 m-1"
+            onClick={() => {
+              setVideoFull(false);
+              setChatOpen((prev) => !prev);
+            }}
+          >
+            <Suspense fallback={<></>}>
+              <IconMessage />
+            </Suspense>
           </button>
         </div>
         <button

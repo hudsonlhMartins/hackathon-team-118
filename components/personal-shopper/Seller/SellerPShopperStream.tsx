@@ -9,6 +9,7 @@ import {
 import Spinner from "$store/components/ui/Spinner.tsx";
 import { lazy, Suspense } from "preact/compat";
 import Chat from "$store/components/personal-shopper/components/Chat.tsx";
+import IconCoffee from "https://deno.land/x/tabler_icons_tsx@0.0.5/tsx/coffee.tsx";
 
 const VideoModalSeller = lazy(() =>
   import(
@@ -78,7 +79,7 @@ const SellerPShopperStream = () => {
       {contact
         ? (
           <>
-            <div className={`flex gap-6 w-full`}>
+            <div className={`flex gap-6 w-full flex-wrap`}>
               <ContactCard contact={contact} handleJoin={handleJoin} />
               <Suspense fallback={<></>}>
                 <VideoModalSeller
@@ -100,8 +101,11 @@ const SellerPShopperStream = () => {
           </>
         )
         : (
-          <div>
-            <h1 class="text-xl font-semibold py-2 px-4">Não houve contato</h1>
+          <div class="flex flex-col items-center justify-center">
+            <h1 class="text-xl font-semibold py-2 px-4">
+              Não há contato no momento
+            </h1>
+            <IconCoffee class="w-20 h-20 text-gray-300 m-4" />
           </div>
         )}
     </div>

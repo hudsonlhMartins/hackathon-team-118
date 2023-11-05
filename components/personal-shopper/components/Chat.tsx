@@ -1,7 +1,6 @@
 import { IMessage } from "$store/components/personal-shopper/types.ts";
 
-
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import Icon from "$store/components/ui/Icon.tsx";
 
 export interface Props {
@@ -12,32 +11,44 @@ export interface Props {
 
 const Chat = ({ messages, handleSendMessage, user }: Props) => {
   const [inputMessage, setInputMessage] = useState("");
-  const [hidden, setHidden] = useState(false);
+
+  const messagesBlock = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     console.log("MESSAGE NO SELLER", messages);
   }, [messages]);
 
-  const handleSubmit = (e:any)=>{
+  const handleSubmit = (e: any) => {
     e.preventDefault();
-    if(inputMessage){
-      handleSendMessage(inputMessage)
-      setInputMessage('')
-    } 
-  }
+    if (inputMessage) {
+      handleSendMessage(inputMessage);
+      setInputMessage("");
+    }
+  };
 
-  const handleClickHiddenChat = ()=>{
-    setHidden((state) => !state)
-  }
+  useEffect(() => {
+    if (!messagesBlock.current) return;
+    console.log("Chat.tsx -> messagesBlock.current", messagesBlock.current);
+
+    messagesBlock.current.scrollTo({
+      top: messagesBlock.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages]);
 
   return (
-    <div className={`flex flex-col relative bg-white justify-between shadow w-full ${user === 'seller' ? 'py-4 px-3 max-w-full' : 'max-w-[420px] mb-5'}`}>
-      
-      <div 
+    <div
+      className={`flex flex-col relative bg-white justify-between shadow w-full ${
+        user === "seller" ? "py-4 px-3 max-w-full" : "max-w-[420px] mb-5"
+      }`}
+    >
+      <div
         className={`flex flex-col w-full h-[325px] data-[hidden=true]:hidden`}
-        data-hidden={hidden}
       >
-        <div className="grow max-h-[275px] border overflow-y-scroll">
+        <div
+          className="grow max-h-[275px] border overflow-y-scroll"
+          ref={messagesBlock}
+        >
           {messages && messages?.map((msg) => {
             const prefix = msg.side === user
               ? "Eu: "
@@ -57,13 +68,11 @@ const Chat = ({ messages, handleSendMessage, user }: Props) => {
             );
           })}
         </div>
-        
-        
-        <form 
-          onSubmit={(e)=> handleSubmit(e)}
+
+        <form
+          onSubmit={(e) => handleSubmit(e)}
           className="w-full"
         >
-
           <div class="border p-2 flex w-full items-center justify-between gap-3">
             <input
               type="text"
@@ -82,8 +91,9 @@ const Chat = ({ messages, handleSendMessage, user }: Props) => {
           </div>
         </form>
       </div>
-      
-      {user === 'client' && (
+
+      {
+        /* {user === 'client' && (
         <button
           className={`absolute left-0 -top-6 rounded-full bg-white shadow-md p-1 m-1`}
           onClick={handleClickHiddenChat}
@@ -94,8 +104,8 @@ const Chat = ({ messages, handleSendMessage, user }: Props) => {
             width={24}
           />
         </button>
-      )}
-
+      )} */
+      }
     </div>
   );
 };
