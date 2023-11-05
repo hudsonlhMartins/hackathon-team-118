@@ -74,23 +74,24 @@ const SellerPShopperStream = () => {
   }
 
   return (
-    <div class="flex border rounded-md p-6 my-10 flex-wrap max-w-[95vw] sm:p-1">
+    <div class="flex flex-col border rounded-md p-6 my-10 flex-wrap max-w-[880px] sm:p-1">
       {contact
         ? (
           <>
-            <ContactCard contact={contact} handleJoin={handleJoin} />
-
-            <Suspense fallback={<></>}>
-              <VideoModalSeller
-                localStream={localStream}
-                remoteVideo={remoteVideo}
-                myVideo={myVideo}
-                sellerUtils={sellerUtils}
-                setContact={setContact}
-                contact={contact}
-                setLocalStream={setLocalStream}
-              />
-            </Suspense>
+            <div className={`flex gap-6 w-full`}>
+              <ContactCard contact={contact} handleJoin={handleJoin} />
+              <Suspense fallback={<></>}>
+                <VideoModalSeller
+                  localStream={localStream}
+                  remoteVideo={remoteVideo}
+                  myVideo={myVideo}
+                  sellerUtils={sellerUtils}
+                  setContact={setContact}
+                  contact={contact}
+                  setLocalStream={setLocalStream}
+                />
+              </Suspense>
+            </div>
             <Chat
               messages={messages}
               handleSendMessage={handeMessage}
@@ -100,7 +101,7 @@ const SellerPShopperStream = () => {
         )
         : (
           <div>
-            <h1 class="text-xl font-semibold">Não houve contato</h1>
+            <h1 class="text-xl font-semibold py-2 px-4">Não houve contato</h1>
           </div>
         )}
     </div>

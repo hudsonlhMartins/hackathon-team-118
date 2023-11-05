@@ -1,5 +1,6 @@
 import { Contact } from "$store/components/personal-shopper/types.ts";
 import Button from "$store/components/ui/Button.tsx";
+import { useState } from "preact/hooks";
 
 export interface Props {
   contact: Contact | null;
@@ -7,6 +8,10 @@ export interface Props {
 }
 
 const ContactCard = ({ contact, handleJoin }: Props) => {
+
+  const [isCall, setIsCall] = useState(false)
+
+
   if (!contact) return <></>;
   return (
     <div class={`p-4`}>
@@ -43,9 +48,14 @@ const ContactCard = ({ contact, handleJoin }: Props) => {
             </li>
           </ul>
         </div>
-        <Button onClick={handleJoin}>
-          Entrar em chamada
-        </Button>
+        {!isCall && (
+          <Button onClick={()=>{
+            setIsCall(true)
+            handleJoin()
+          }}>
+            Entrar em chamada
+          </Button>
+        )}
       </>
     </div>
   );

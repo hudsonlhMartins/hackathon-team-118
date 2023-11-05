@@ -24,7 +24,8 @@ export default abstract class BaseUtils {
     // this.webSocket = new WebSocket(
     //   "ws://48eb-2804-28d0-234-e800-7969-705-ff84-f8ff.ngrok-free.app/websocket",
     // );
-    this.webSocket = new WebSocket("ws://localhost:8000/websocket");
+    //this.webSocket = new WebSocket("ws://localhost:8000/websocket");
+    this.webSocket = new WebSocket("wss://5b5a-2804-28d0-234-e800-5db2-c852-9ed7-3a48.ngrok-free.app/websocket");
     this.webSocket.onmessage = (event) => {
       this._handleSignallingData(JSON.parse(event.data));
     };
