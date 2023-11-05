@@ -83,7 +83,6 @@ export default class SellerUtils extends BaseUtils {
         break;
       case "contact":
         this.setContact(data);
-        console.log("data.userInfo.Email", data.userInfo.Email);
         this.userName = data.userInfo.Email;
         break;
       case "candidate":

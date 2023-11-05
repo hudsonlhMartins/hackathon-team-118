@@ -1,6 +1,5 @@
 import { SellerType } from "$store/service/repositories/ISellerRepository.ts";
 
-
 export async function checkAuth() {
   const url = "/no-cache/profileSystem/getProfile";
 
@@ -22,17 +21,12 @@ export async function checkAuth() {
       Email: "teste@teste.com",
     };
 
-    //login nao funciona. Fetch mockado
-    // const data = (await response.json());
-    console.log("utils.ts -> checkAuth -> data", data);
-
     return {
       auth: data.IsUserDefined,
       profileData: data.IsUserDefined ? data : null,
     };
   } catch (error) {
     console.error("Error:", error);
-    // return null;
   }
 }
 
@@ -45,10 +39,24 @@ export async function checkSeller(email: string | undefined) {
     if (!sellerData) return { isSeller: false, sellerCategories: "" };
 
     const { sellerCategoryIds, isSeller } = sellerData[0];
-    
+
     return { isSeller, sellerCategories: sellerCategoryIds };
   } catch (error) {
-
     return { isSeller: false, sellerCategories: "" };
   }
+}
+
+export function formatMessage(message: string) {
+  const urlRegex = /((https?:|www\.)\S+\w)/g;
+
+  const formattedText = message.replace(urlRegex, (url) => {
+    let fullURL = url;
+    if (!url.startsWith("http")) {
+      fullURL = `https://${url}`;
+    }
+
+    return `<a href="${fullURL}" target="_blank" class="underline">${url}</a>`;
+  });
+
+  return formattedText;
 }

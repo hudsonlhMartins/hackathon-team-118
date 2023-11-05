@@ -2,6 +2,7 @@ import { IMessage } from "$store/components/personal-shopper/types.ts";
 
 import { useEffect, useRef, useState } from "preact/hooks";
 import Icon from "$store/components/ui/Icon.tsx";
+import Message from "$store/components/personal-shopper/components/Message.tsx";
 
 export interface Props {
   messages: IMessage[] | null;
@@ -14,9 +15,7 @@ const Chat = ({ messages, handleSendMessage, user }: Props) => {
 
   const messagesBlock = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    console.log("MESSAGE NO SELLER", messages);
-  }, [messages]);
+  
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -28,7 +27,6 @@ const Chat = ({ messages, handleSendMessage, user }: Props) => {
 
   useEffect(() => {
     if (!messagesBlock.current) return;
-    console.log("Chat.tsx -> messagesBlock.current", messagesBlock.current);
 
     messagesBlock.current.scrollTo({
       top: messagesBlock.current.scrollHeight,
@@ -61,9 +59,7 @@ const Chat = ({ messages, handleSendMessage, user }: Props) => {
                     : "rounded-bl-none bg-primary"
                 }`}
               >
-                <p className="break-words">
-                  {`${prefix}${msg.message}`}
-                </p>
+                <Message message={msg.message as string} prefix={prefix} />
               </div>
             );
           })}

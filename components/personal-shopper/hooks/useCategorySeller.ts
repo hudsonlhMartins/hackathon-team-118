@@ -34,7 +34,6 @@ export default function useCategorySeller(productId: string) {
       const res = await fetch('/list-sellers')
       const sellerList = await res.json() as SellerType[] | []
 
-      console.log("sellerList",sellerList)
       if(!sellerList.length){
         setHasSeller(false)
         return
@@ -62,8 +61,7 @@ export default function useCategorySeller(productId: string) {
 
         const arrayCategoryIds = categorysIds.split('/')
 
-        console.log('arrayCategoryIds.includes(categoryId)', arrayCategoryIds.includes(categoryId))
-        console.log('categoryId', categoryId)
+        
         if(arrayCategoryIds.includes(categoryId)){
           setHasSeller(true)
           break

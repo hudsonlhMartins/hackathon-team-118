@@ -48,12 +48,8 @@ const ClientPShopperStream = ({ productId }: Props) => {
     setBtnLoading(false);
   };
 
-  // useEffect(() => {
-  //   console.log("PRODID", productId);
-  //   console.log("PROD", prod);
-  // }, [prod]);
+  
 
-  console.log("hasSeller", hasSeller);
 
   return (
     <>
