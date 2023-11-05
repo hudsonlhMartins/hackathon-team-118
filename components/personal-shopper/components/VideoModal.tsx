@@ -77,7 +77,10 @@ const VideoModal = (
 
   const connectionRef = useRef(clientUtils.peerConn);
 
-  if (!contactActive.active) return <div>{contactActive.message}</div>;
+  if (!contactActive.active) {
+    alert(contactActive.message)
+    return <></>;
+  }
   return (
     <div
       class={`${
