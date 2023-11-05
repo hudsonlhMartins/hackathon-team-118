@@ -29,6 +29,16 @@ const IconX = lazy(() =>
     "https://deno.land/x/tabler_icons_tsx@0.0.5/tsx/x.tsx"
   )
 );
+const IconArrowsMaximize = lazy(() =>
+  import(
+    "https://deno.land/x/tabler_icons_tsx@0.0.5/tsx/arrows-maximize.tsx"
+  )
+);
+const IconArrowsMinimize = lazy(() =>
+  import(
+    "https://deno.land/x/tabler_icons_tsx@0.0.5/tsx/arrows-minimize.tsx"
+  )
+);
 
 export interface Props {
   userProfile: UserInfo;
@@ -68,12 +78,31 @@ const VideoModal = (
   const connectionRef = useRef(clientUtils.peerConn);
 
   if (!contactActive.active) return <div>{contactActive.message}</div>;
-  console.log("connectionRef", connectionRef);
   return (
     <div
-      class={`${modalOpened ? "block" : "hidden"} mb-5 flex flex-col items-end`}
+      class={`${
+        modalOpened ? "block" : "hidden"
+      } mb-5 flex flex-col items-end max-w-[90vw]`}
     >
-      <div class="flex justify-between">
+      <div class="flex justify-between w-full">
+        <button
+          class="rounded-full bg-white shadow-md p-1 m-1"
+          onClick={() => {
+            setVideoFull((prev) => !prev);
+          }}
+        >
+          {videoFull
+            ? (
+              <Suspense fallback={<></>}>
+                <IconArrowsMinimize />
+              </Suspense>
+            )
+            : (
+              <Suspense fallback={<></>}>
+                <IconArrowsMaximize />
+              </Suspense>
+            )}
+        </button>
         <button
           class="rounded-full bg-red-400 shadow-md p-1 m-1"
           onClick={() => {
@@ -86,33 +115,31 @@ const VideoModal = (
             <IconX />
           </Suspense>
         </button>
-        <button
-          class="rounded-full bg-red-400 shadow-md p-1 m-1"
-          onClick={() => {
-            setVideoFull((prev) => !prev);
-          }}
-        >
-          ampliar/recolher
-        </button>
       </div>
-      <div id="video-call-div" class="relative">
-        <video
-          ref={myVideo}
-          muted
-          id="local-video"
-          autoPlay
-          class={`bg-black ${
-            !videoFull ? "max-h-20" : "max-h-40"
-          } absolute rounded-full bottom-0 right-0 border-2 border-white`}
+      <div id="video-call-div" class="relative max-w-full">
+        <div
+          class={`${
+            !videoFull ? "w-20" : "w-40"
+          } absolute bottom-0 right-0 transition-all`}
         >
-        </video>
-        <video
-          ref={remoteVideo}
-          id="remote-video"
-          autoPlay
-          class={`bg-black ${!videoFull ? "max-h-64" : "max-h-[35rem]"} `}
-        >
-        </video>
+          <video
+            ref={myVideo}
+            muted
+            id="local-video"
+            autoPlay
+            class={`bg-black h-full w-full rounded-full border-2 border-white`}
+          >
+          </video>
+        </div>
+        <div class={`${!videoFull ? "w-64" : "w-[35rem]"} transition-all`}>
+          <video
+            ref={remoteVideo}
+            id="remote-video"
+            autoPlay
+            class={`bg-black h-full w-full`}
+          >
+          </video>
+        </div>
         <div class="call-action-div">
           <button
             onClick={() => {
