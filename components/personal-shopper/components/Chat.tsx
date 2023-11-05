@@ -1,5 +1,5 @@
 import { IMessage } from "$store/components/personal-shopper/types.ts";
-import { ChangeEvent } from "https://esm.sh/v128/preact@10.15.1/compat/src/index.js";
+
 import { useEffect, useState } from "preact/hooks";
 
 export interface Props {
@@ -9,25 +9,44 @@ export interface Props {
 }
 
 const Chat = ({ messages, handleSendMessage, user }: Props) => {
-  const [inputMessage, setInputMessage] = useState("second");
+  const [inputMessage, setInputMessage] = useState("");
 
   useEffect(() => {
     console.log("MESSAGE NO SELLER", messages);
   }, [messages]);
   return (
-    <div>
-      <div>
+    <div class="flex flex-col h-[325px] bg-white justify-between">
+      <div class="grow max-h-[275px] border overflow-y-scroll">
+        {messages && messages?.map((msg) => {
+          const prefix = msg.side === user
+            ? "Eu: "
+            : (user === "seller" ? "Cliente: " : "Fashion: ");
+          return (
+            <div
+              class={`p-2 m-1 border rounded-full text-white ${
+                msg.side === user
+                  ? "rounded-br-none bg-secondary"
+                  : "rounded-bl-none bg-primary"
+              }`}
+            >
+              <p>
+                {`${prefix}${msg.message}`}
+              </p>
+            </div>
+          );
+        })}
       </div>
-      <div>
+      <div class="border p-2">
         <input
           type="text"
           value={inputMessage}
           onChange={(e) =>
             setInputMessage((e.target as HTMLInputElement).value)}
+          placeholder="Mensagem..."
         />
         <button
-          onClick={() =>
-            handleSendMessage(/* inputMessage */ `from ${user} message`)}
+          onClick={() => inputMessage &&
+            handleSendMessage(inputMessage)}
         >
           Enviar
         </button>
