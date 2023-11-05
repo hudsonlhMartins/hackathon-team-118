@@ -3,7 +3,11 @@ import {
   Ref,
   StateUpdater,
 } from "https://esm.sh/v128/preact@10.15.1/hooks/src/index.js";
-import { Product, UserInfo } from "$store/components/personal-shopper/types.ts";
+import {
+  IMessage,
+  Product,
+  UserInfo,
+} from "$store/components/personal-shopper/types.ts";
 
 export default class ClientUtils extends BaseUtils {
   userProfile: UserInfo;
@@ -15,10 +19,13 @@ export default class ClientUtils extends BaseUtils {
   }>;
   myVideo: Ref<HTMLVideoElement>;
   remoteVideo: Ref<HTMLVideoElement>;
+  setMessages: StateUpdater<IMessage[]>;
+
   constructor(
     userProfile: UserInfo,
     product: Product,
     setLocalStream: StateUpdater<MediaStream | undefined>,
+    setMessages: StateUpdater<IMessage[]>,
     setContactActive: StateUpdater<{
       active: boolean;
       message: string;
@@ -30,6 +37,7 @@ export default class ClientUtils extends BaseUtils {
     this.userProfile = userProfile;
     this.product = product;
     this.setLocalStream = setLocalStream;
+    this.setMessages = setMessages;
     this.setContactActive = setContactActive;
     this.myVideo = myVideo;
     this.remoteVideo = remoteVideo;
@@ -48,6 +56,16 @@ export default class ClientUtils extends BaseUtils {
       this.userProfile,
     );
     this.startCall();
+  }
+
+  sendChatMessage(message: string) {
+    alert(message);
+    this._sendData({
+      type: "chat_message",
+      from: this.userName,
+      side: "client",
+      message,
+    });
   }
 
   sendUsername(userName: string, product: Product, userInfo: UserInfo) {
@@ -76,7 +94,9 @@ export default class ClientUtils extends BaseUtils {
             track.stop();
           });
         }
-
+        break;
+      case "recieve_message":
+        this.setMessages(data.messages);
         break;
       case "candidate":
         this.peerConn.addIceCandidate(data.candidate);

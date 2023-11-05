@@ -1,7 +1,12 @@
 import { StateUpdater, useMemo, useRef, useState } from "preact/hooks";
 import { lazy, Suspense } from "preact/compat";
 import ClientUtils from "../utils/ClientUtils.ts";
-import { Product, UserInfo } from "$store/components/personal-shopper/types.ts";
+import {
+  IMessage,
+  Product,
+  UserInfo,
+} from "$store/components/personal-shopper/types.ts";
+import Chat from "$store/components/personal-shopper/components/Chat.tsx";
 
 const IconVideoOff = lazy(() =>
   import(
@@ -58,6 +63,7 @@ const VideoModal = (
     active: true,
     message: "",
   });
+  const [messages, setMessages] = useState<IMessage[]>([]);
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
@@ -68,6 +74,7 @@ const VideoModal = (
         userProfile,
         product,
         setLocalStream,
+        setMessages,
         setContactActive,
         myVideo,
         remoteVideo,
@@ -75,10 +82,14 @@ const VideoModal = (
     [],
   );
 
+  const handeMessage = (message: string) => {
+    clientUtils.sendChatMessage(message);
+  };
+
   const connectionRef = useRef(clientUtils.peerConn);
 
   if (!contactActive.active) {
-    alert(contactActive.message)
+    alert(contactActive.message);
     return <></>;
   }
   return (
@@ -87,25 +98,32 @@ const VideoModal = (
         modalOpened ? "block" : "hidden"
       } mb-5 flex flex-col items-end max-w-[90vw]`}
     >
+      <Chat
+        messages={messages}
+        handleSendMessage={handeMessage}
+        user="client"
+      />
       <div class="flex justify-between w-full">
-        <button
-          class="rounded-full bg-white shadow-md p-1 m-1"
-          onClick={() => {
-            setVideoFull((prev) => !prev);
-          }}
-        >
-          {videoFull
-            ? (
-              <Suspense fallback={<></>}>
-                <IconArrowsMinimize />
-              </Suspense>
-            )
-            : (
-              <Suspense fallback={<></>}>
-                <IconArrowsMaximize />
-              </Suspense>
-            )}
-        </button>
+        <div>
+          <button
+            class="rounded-full bg-white shadow-md p-1 m-1"
+            onClick={() => {
+              setVideoFull((prev) => !prev);
+            }}
+          >
+            {videoFull
+              ? (
+                <Suspense fallback={<></>}>
+                  <IconArrowsMinimize />
+                </Suspense>
+              )
+              : (
+                <Suspense fallback={<></>}>
+                  <IconArrowsMaximize />
+                </Suspense>
+              )}
+          </button>
+        </div>
         <button
           class="rounded-full bg-red-400 shadow-md p-1 m-1"
           onClick={() => {

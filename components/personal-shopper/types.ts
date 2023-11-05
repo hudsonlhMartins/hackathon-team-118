@@ -165,3 +165,9 @@ export interface Contact {
   productInfo: Product;
   userInfo: UserInfo;
 }
+
+export interface IMessage{
+  from: string,
+  side: "seller" | "client"
+  message: string,
+}

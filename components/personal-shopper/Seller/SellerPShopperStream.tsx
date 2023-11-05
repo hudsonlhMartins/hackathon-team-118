@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import SellerUtils from "../utils/SellerUtils.ts";
-import { Contact } from "$store/components/personal-shopper/types.ts";
+import { Contact, IMessage } from "$store/components/personal-shopper/types.ts";
 import ContactCard from "$store/components/personal-shopper/components/ContactCard.tsx";
 import {
   checkAuth,
@@ -8,6 +8,7 @@ import {
 } from "$store/components/personal-shopper/utils/utils.ts";
 import Spinner from "$store/components/ui/Spinner.tsx";
 import { lazy, Suspense } from "preact/compat";
+import Chat from "$store/components/personal-shopper/components/Chat.tsx";
 
 const VideoModalSeller = lazy(() =>
   import(
@@ -20,6 +21,7 @@ const SellerPShopperStream = () => {
   const [localStream, setLocalStream] = useState<MediaStream>();
   const [contact, setContact] = useState<Contact | null>(null);
   const [showContent, setShowContent] = useState(false);
+  const [messages, setMessages] = useState<IMessage[]>([]);
 
   const myVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
@@ -31,10 +33,12 @@ const SellerPShopperStream = () => {
       contact?.userInfo?.Email ?? "",
     );
     sellerUtils?.current?.joinCall(
-      setLocalStream,
-      myVideo,
       remoteVideo,
     );
+  };
+
+  const handeMessage = (message: string) => {
+    sellerUtils.current?.sendChatMessage(message);
   };
 
   useEffect(() => {
@@ -53,6 +57,7 @@ const SellerPShopperStream = () => {
 
       sellerUtils.current = new SellerUtils(
         setContact,
+        setMessages,
         authEmail as string,
         sellerCategories,
       );
@@ -86,6 +91,11 @@ const SellerPShopperStream = () => {
                 setLocalStream={setLocalStream}
               />
             </Suspense>
+            <Chat
+              messages={messages}
+              handleSendMessage={handeMessage}
+              user="seller"
+            />
           </>
         )
         : (

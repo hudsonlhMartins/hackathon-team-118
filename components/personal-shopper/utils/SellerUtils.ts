@@ -3,27 +3,29 @@ import {
   StateUpdater,
 } from "https://esm.sh/v128/preact@10.15.1/hooks/src/index.js";
 import BaseUtils from "$store/components/personal-shopper/utils/BaseUtils.ts";
-import { Contact } from "$store/components/personal-shopper/types.ts";
+import { Contact, IMessage } from "$store/components/personal-shopper/types.ts";
 
 export default class SellerUtils extends BaseUtils {
   setContact: StateUpdater<Contact | null>;
+  setMessages: StateUpdater<IMessage[]>;
   sellerName: string | undefined;
   sellerCategories: string | undefined;
 
-
   constructor(
     setContact: StateUpdater<Contact | null>,
+    setMessages: StateUpdater<IMessage[]>,
     sellerName: string,
     sellerCategories: string,
   ) {
     super();
     this.setContact = setContact;
+    this.setMessages = setMessages;
     this.sellerName = sellerName;
     this.sellerCategories = sellerCategories;
     this._init();
   }
 
-   initialStream(stream:MediaStream){
+  initialStream(stream: MediaStream) {
     this.stream = stream;
   }
 
@@ -76,6 +78,9 @@ export default class SellerUtils extends BaseUtils {
         alert("Cliente encerrou a conexão");
         window.location.reload();
         break;
+      case "recieve_message":
+        this.setMessages(data.messages);
+        break;
       case "contact":
         this.setContact(data);
         console.log("data.userInfo.Email", data.userInfo.Email);
@@ -84,6 +89,15 @@ export default class SellerUtils extends BaseUtils {
       case "candidate":
         this.peerConn.addIceCandidate(data.candidate);
     }
+  }
+
+  sendChatMessage(message: string) {
+    this._sendData({
+      type: "chat_message",
+      from: this.sellerName,
+      side: "seller",
+      message,
+    });
   }
 
   private _createAndSendAnswer() {
@@ -100,14 +114,12 @@ export default class SellerUtils extends BaseUtils {
   }
 
   joinCall(
-    setLocalStream: StateUpdater<MediaStream | undefined>,
-    myVideo: Ref<HTMLVideoElement>,
     remoteVideo: Ref<HTMLVideoElement>,
   ) {
     //TODO: tirar o get media da função e colocar no on connect
-    const stream = this.stream
-  
-    if(!stream) return
+    const stream = this.stream;
+
+    if (!stream) return;
 
     stream.getTracks().forEach((track) => {
       this.peerConn.addTrack(track, stream);
@@ -128,7 +140,7 @@ export default class SellerUtils extends BaseUtils {
       type: "join_call",
       sellerName: this.sellerName,
     });
-    
+
     // quando alguem conectar e adcionar um stream, o mesmo será exibido no video
     this.peerConn.ontrack = (e) => {
       if (remoteVideo.current) {
