@@ -131,7 +131,11 @@ const VideoModal = (
           >
           </video>
         </div>
-        <div class={`${!videoFull ? "w-64" : "w-[35rem]"} transition-all`}>
+        <div
+          class={`${
+            !videoFull ? "w-64" : "w-[35rem]"
+          } transition-all max-w-[90vw]`}
+        >
           <video
             ref={remoteVideo}
             id="remote-video"
